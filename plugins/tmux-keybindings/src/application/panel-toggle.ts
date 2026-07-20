@@ -2,6 +2,7 @@ import type { HerdrClientPort } from '#tmux-keybindings/application/ports/herdr-
 import type { StateRepositoryPort } from '#tmux-keybindings/application/ports/state-repository-port';
 import type { Environment } from '#tmux-keybindings/domain/models';
 import { PluginError } from '#tmux-keybindings/errors/plugin-error';
+import { PluginContext } from '@oullin/herdr-plugin-core';
 
 export type ToggleResult = 'opened' | 'closed';
 
@@ -15,9 +16,10 @@ export class PanelToggle {
 	}
 
 	toggle(environment: Environment = process.env): ToggleResult {
-		const workspaceId = environment['HERDR_WORKSPACE_ID'];
-		const tabId = environment['HERDR_TAB_ID'];
-		const activePaneId = environment['HERDR_PANE_ID'];
+		const context = new PluginContext(environment);
+		const workspaceId = context.workspaceId();
+		const tabId = context.tabId();
+		const activePaneId = context.paneId();
 
 		if (!workspaceId || !tabId || !activePaneId) {
 			throw new PluginError('The keybinding panel requires an active workspace, tab, and pane');

@@ -14,6 +14,7 @@ export { HerdrCommandError } from '#tab-numbers/errors/herdr-command-error';
 export { type CommandResult, type CommandRunner, NodeCommandRunner } from '#tab-numbers/infrastructure/command-runner';
 export { HerdrCliClient } from '#tab-numbers/infrastructure/herdr-cli-client';
 export { TabNumbersApplication } from '#tab-numbers/presentation/tab-numbers-application';
+export { PluginContext } from '@oullin/herdr-plugin-core';
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
 	const client = new HerdrCliClient();

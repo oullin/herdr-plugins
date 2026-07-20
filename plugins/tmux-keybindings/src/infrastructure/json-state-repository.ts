@@ -1,9 +1,9 @@
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { basename, dirname, join } from 'node:path';
+import { join } from 'node:path';
 
 import type { StateRepositoryPort } from '#tmux-keybindings/application/ports/state-repository-port';
 import type { ConfigurationSnapshot } from '#tmux-keybindings/domain/models';
+import { JsonFileStore } from '@oullin/herdr-plugin-core';
 
 interface PaneState {
 	readonly panes: Readonly<Record<string, string>>;
@@ -11,9 +11,11 @@ interface PaneState {
 
 export class JsonStateRepository implements StateRepositoryPort {
 	private readonly stateDirectory: string;
+	private readonly store: JsonFileStore;
 
-	constructor(stateDirectory: string) {
+	constructor(stateDirectory: string, store: JsonFileStore = new JsonFileStore()) {
 		this.stateDirectory = stateDirectory;
+		this.store = store;
 	}
 
 	loadConfigurationSnapshot(configPath: string): ConfigurationSnapshot | undefined {
@@ -25,11 +27,7 @@ export class JsonStateRepository implements StateRepositoryPort {
 	}
 
 	deleteConfigurationSnapshot(configPath: string): void {
-		const path = this.snapshotPath(configPath);
-
-		if (existsSync(path)) {
-			this.writeJson(path, undefined);
-		}
+		this.writeJson(this.snapshotPath(configPath), undefined);
 	}
 
 	isAutomaticApplyDisabled(): boolean {
@@ -78,37 +76,10 @@ export class JsonStateRepository implements StateRepositoryPort {
 	}
 
 	private readJson<T>(path: string): T | undefined {
-		if (!existsSync(path)) {
-			return undefined;
-		}
-
-		const content = readFileSync(path, 'utf8').trim();
-
-		if (content === '') {
-			return undefined;
-		}
-
-		return JSON.parse(content) as T;
+		return this.store.read<T>(path);
 	}
 
 	private writeJson(path: string, value: unknown): void {
-		mkdirSync(
-			dirname(path),
-			{ recursive: true },
-		);
-
-		const temporaryPath = join(
-			dirname(path),
-			`.${basename(path)}.${process.pid}.tmp`,
-		);
-
-		const content = value === undefined ? '' : `${JSON.stringify(value, null, 2)}\n`;
-
-		writeFileSync(
-			temporaryPath,
-			content,
-			{ encoding: 'utf8', mode: 0o600 },
-		);
-		renameSync(temporaryPath, path);
+		this.store.write(path, value);
 	}
 }

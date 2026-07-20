@@ -52,4 +52,17 @@ describe('module aliases', () => {
 			policy.violations(),
 		).toEqual([]);
 	});
+
+	it('declares the shared runtime as a local direct dependency', () => {
+		const packageJson = JSON.parse(readFileSync(join(
+			process.cwd(),
+			'plugins',
+			'tab-numbers',
+			'package.json',
+		), 'utf8')) as {
+			readonly dependencies?: Record<string, string>;
+		};
+
+		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../packages/plugin-core' });
+	});
 });

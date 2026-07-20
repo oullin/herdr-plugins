@@ -1,6 +1,1 @@
-export class PluginError extends Error {
-	constructor(message: string, options?: ErrorOptions) {
-		super(message, options);
-		this.name = 'PluginError';
-	}
-}
+export { PluginError } from '@oullin/herdr-plugin-core';

@@ -1,8 +1,3 @@
-import type { Tab, Workspace } from '#tab-numbers/domain/models';
+import type { TabClient, WorkspaceClient } from '@oullin/herdr-plugin-core';
 
-export interface HerdrClientPort {
-	listWorkspaces(): readonly Workspace[];
-	listTabs(workspaceId: string): readonly Tab[];
-	getTab(tabId: string): Tab;
-	renameTab(tabId: string, label: string): void;
-}
+export interface HerdrClientPort extends TabClient, WorkspaceClient {}

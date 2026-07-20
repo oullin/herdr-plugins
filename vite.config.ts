@@ -15,7 +15,7 @@ export default defineConfig(
 			},
 		},
 		test: {
-			include: ['plugins/**/*.test.ts'],
+			include: ['packages/**/*.test.ts', 'plugins/**/*.test.ts'],
 		},
 		run: {
 			cache: {

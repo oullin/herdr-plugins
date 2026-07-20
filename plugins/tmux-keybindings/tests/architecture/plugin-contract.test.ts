@@ -17,8 +17,11 @@ describe('tmux-keybindings plugin contract', () => {
 		);
 
 		expect(manifest).toContain('id = "oullin.tmux-keybindings"');
-		expect(manifest).toContain('version = "0.1.0"');
+		expect(manifest).toContain('version = "0.1.1"');
 		expect(manifest).toContain('min_herdr_version = "0.7.0"');
+		expect(manifest).toContain('[[build]]');
+		expect(manifest).toContain('"npm"');
+		expect(manifest).toContain('"--omit=dev"');
 		expect(
 			manifest.match(/^id = "(apply|toggle|restore|bindings)"$/gmu),
 		).toHaveLength(4);
@@ -27,7 +30,10 @@ describe('tmux-keybindings plugin contract', () => {
 	});
 
 	it('uses concern aliases and is listed in the root catalogue', () => {
-		const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { readonly imports?: Record<string, string> };
+		const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
+			readonly dependencies?: Record<string, string>;
+			readonly imports?: Record<string, string>;
+		};
 
 		const catalogue = readFileSync(
 			join(
@@ -48,5 +54,6 @@ describe('tmux-keybindings plugin contract', () => {
 			'#tmux-keybindings/testing/*',
 		]);
 		expect(catalogue).toContain('[Tmux Keybindings](plugins/tmux-keybindings)');
+		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../packages/plugin-core' });
 	});
 });
