@@ -1,0 +1,21 @@
+{
+  "name": "@oullin/herdr-plugins",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A collection of focused, independently installable plugins for Herdr.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oullin/herdr-plugins.git"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "vite-plus": "0.2.5"
+  },
+  "engines": {
+    "node": ">=24.11.0 <25",
+    "pnpm": "11.15.1"
+  },
+  "packageManager": "pnpm@11.15.1"
+}

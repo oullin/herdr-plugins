@@ -1,0 +1,22 @@
+{
+  "name": "@oullin/herdr-tab-numbers",
+  "version": "0.1.0",
+  "description": "Show stable Herdr tab numbers in named tab labels.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oullin/herdr-plugins.git",
+    "directory": "plugins/tab-numbers"
+  },
+  "files": [
+    "herdr-plugin.toml",
+    "index.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "exports": "./index.mjs",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  }
+}
