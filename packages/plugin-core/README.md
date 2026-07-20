@@ -18,6 +18,10 @@ remain in their plugin packages.
 ## Entrypoints
 
 - `@oullin/herdr-plugin-core` contains supported runtime APIs.
+- `@oullin/herdr-plugin-core/herdr-cli` contains the compatibility facade and all CLI concerns.
+- `@oullin/herdr-plugin-core/herdr-cli/{transport,responses,workspaces,tabs,config,panes}` exposes independently composable CLI concerns.
+- `@oullin/herdr-plugin-core/path-resolvers/{config,state}` exposes focused platform path resolvers.
+- `@oullin/herdr-plugin-core/persistence/{atomic-file,json-file}` exposes focused persistence stores.
 - `@oullin/herdr-plugin-core/testing` contains command-runner test doubles.
 
 ## Licence

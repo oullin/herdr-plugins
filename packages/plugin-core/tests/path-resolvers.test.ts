@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { HerdrConfigPathResolver, PluginStateDirectoryResolver } from '@oullin/herdr-plugin-core';
+import { HerdrConfigPathResolver } from '@oullin/herdr-plugin-core/path-resolvers/config';
+import { PluginStateDirectoryResolver } from '@oullin/herdr-plugin-core/path-resolvers/state';
 
 describe('path resolvers', () => {
 	it('honours Herdr path overrides', () => {

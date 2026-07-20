@@ -11,11 +11,23 @@
   },
   "type": "module",
   "imports": {
+    "#herdr-plugin-core/herdr-cli": "./src/herdr-cli/index.ts",
+    "#herdr-plugin-core/herdr-cli/*": "./src/herdr-cli/*/index.ts",
+    "#herdr-plugin-core/path-resolvers": "./src/path-resolvers/index.ts",
+    "#herdr-plugin-core/path-resolvers/*": "./src/path-resolvers/*/index.ts",
+    "#herdr-plugin-core/persistence": "./src/persistence/index.ts",
+    "#herdr-plugin-core/persistence/*": "./src/persistence/*/index.ts",
     "#herdr-plugin-core/*": "./src/*.ts",
     "#herdr-plugin-core/testing/*": "./src/testing/*.ts"
   },
   "exports": {
     ".": "./src/index.ts",
+    "./herdr-cli": "./src/herdr-cli/index.ts",
+    "./herdr-cli/*": "./src/herdr-cli/*/index.ts",
+    "./path-resolvers": "./src/path-resolvers/index.ts",
+    "./path-resolvers/*": "./src/path-resolvers/*/index.ts",
+    "./persistence": "./src/persistence/index.ts",
+    "./persistence/*": "./src/persistence/*/index.ts",
     "./testing": "./src/testing/index.ts"
   },
   "engines": {

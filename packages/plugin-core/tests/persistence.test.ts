@@ -4,7 +4,8 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vite-plus/test';
 
-import { AtomicFileStore, JsonFileStore } from '@oullin/herdr-plugin-core';
+import { AtomicFileStore } from '@oullin/herdr-plugin-core/persistence/atomic-file';
+import { JsonFileStore } from '@oullin/herdr-plugin-core/persistence/json-file';
 
 describe('atomic persistence', () => {
 	it('writes text and JSON through atomic replacements', () => {

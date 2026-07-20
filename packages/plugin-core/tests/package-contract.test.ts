@@ -23,6 +23,12 @@ describe('plugin core package contract', () => {
 			version: '0.1.0',
 			exports: {
 				'.': './src/index.ts',
+				'./herdr-cli': './src/herdr-cli/index.ts',
+				'./herdr-cli/*': './src/herdr-cli/*/index.ts',
+				'./path-resolvers': './src/path-resolvers/index.ts',
+				'./path-resolvers/*': './src/path-resolvers/*/index.ts',
+				'./persistence': './src/persistence/index.ts',
+				'./persistence/*': './src/persistence/*/index.ts',
 				'./testing': './src/testing/index.ts',
 			},
 		});

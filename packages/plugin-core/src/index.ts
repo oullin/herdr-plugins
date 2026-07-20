@@ -1,7 +1,7 @@
 export { type CommandResult, type CommandRunner, NodeCommandRunner } from '#herdr-plugin-core/command-runner';
 export { HerdrCommandError, type HerdrErrorOptions, PluginError } from '#herdr-plugin-core/errors';
 export { executePlugin, type PluginExecutionOptions } from '#herdr-plugin-core/execution';
-export { HerdrCliClient } from '#herdr-plugin-core/herdr-cli-client';
+export { type HerdrApiError, HerdrCliClient, HerdrCliTransport, HerdrConfigClient, HerdrPaneClient, HerdrResponseDecoder, HerdrTabClient, HerdrWorkspaceClient } from '#herdr-plugin-core/herdr-cli';
 export { isJsonObject } from '#herdr-plugin-core/json';
 export type { Environment, JsonObject, Pane, PluginPaneOptions, Tab, Workspace } from '#herdr-plugin-core/models';
 export { HerdrConfigPathResolver, PluginStateDirectoryResolver } from '#herdr-plugin-core/path-resolvers';

@@ -1,9 +1,28 @@
 import { describe, expect, it } from 'vite-plus/test';
 
 import { HerdrCliClient, HerdrCommandError } from '@oullin/herdr-plugin-core';
+import { HerdrTabClient } from '@oullin/herdr-plugin-core/herdr-cli/tabs';
+import { HerdrCliTransport } from '@oullin/herdr-plugin-core/herdr-cli/transport';
 import { StubCommandRunner } from '@oullin/herdr-plugin-core/testing';
 
 describe('HerdrCliClient', () => {
+	it('exposes independently composable concern clients', () => {
+		const runner = new StubCommandRunner({
+			error: undefined,
+			status: 0,
+			stdout: JSON.stringify({ result: { tab: { tab_id: 't1', workspace_id: 'w1', label: 'one', number: 1 } } }),
+			stderr: '',
+		});
+
+		const transport = new HerdrCliTransport('/mock/herdr', runner);
+		const tabs = new HerdrTabClient(transport);
+
+		expect(
+			tabs.getTab('t1'),
+		).toEqual({ tab_id: 't1', workspace_id: 'w1', label: 'one', number: 1 });
+		expect(runner.calls[0]?.args).toEqual(['tab', 'get', 't1']);
+	});
+
 	it('decodes workspaces, tabs, and plugin panes through one transport', () => {
 		const runner = new StubCommandRunner(
 			{
