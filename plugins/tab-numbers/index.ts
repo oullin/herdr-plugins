@@ -11,17 +11,14 @@ export { TabNumbersPlugin, type Environment } from './src/application/tab-number
 export { type Tab, type Workspace } from './src/domain/models.ts';
 export { TabNumberFormatter } from './src/domain/tab-number-formatter.ts';
 export { HerdrCommandError } from './src/errors/herdr-command-error.ts';
-export {
-  type CommandResult,
-  type CommandRunner,
-  NodeCommandRunner,
-} from './src/infrastructure/command-runner.ts';
+export { type CommandResult, type CommandRunner, NodeCommandRunner } from './src/infrastructure/command-runner.ts';
 export { HerdrCliClient } from './src/infrastructure/herdr-cli-client.ts';
 export { TabNumbersApplication } from './src/presentation/tab-numbers-application.ts';
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const client = new HerdrCliClient();
-  const synchronizer = new TabNumberSynchronizer(client);
-  const plugin = new TabNumbersPlugin(synchronizer);
-  new TabNumbersApplication(plugin).execute();
+	const client = new HerdrCliClient();
+	const synchronizer = new TabNumberSynchronizer(client);
+	const plugin = new TabNumbersPlugin(synchronizer);
+
+	new TabNumbersApplication(plugin).execute();
 }

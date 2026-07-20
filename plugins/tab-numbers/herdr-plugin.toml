@@ -1,14 +1,14 @@
 id = "oullin.tab-numbers"
 name = "Tab Numbers"
-version = "0.1.2"
+version = "0.1.3"
 min_herdr_version = "0.7.0"
-description = "Show stable Herdr tab numbers in named tab labels"
+description = "Show contiguous position numbers in named Herdr tab labels"
 platforms = ["linux", "macos", "windows"]
 
 [[actions]]
 id = "sync"
 title = "Sync tab numbers"
-description = "Add stable Herdr numbers to every named tab"
+description = "Re-index every named tab with contiguous position numbers"
 contexts = ["global"]
 command = ["node", "index.ts"]
 
@@ -18,4 +18,12 @@ command = ["node", "index.ts"]
 
 [[events]]
 on = "tab.renamed"
+command = ["node", "index.ts"]
+
+[[events]]
+on = "tab.closed"
+command = ["node", "index.ts"]
+
+[[events]]
+on = "tab.moved"
 command = ["node", "index.ts"]

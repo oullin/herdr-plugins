@@ -1,7 +1,7 @@
 {
   "name": "@oullin/herdr-tab-numbers",
-  "version": "0.1.2",
-  "description": "Show stable Herdr tab numbers in named tab labels.",
+  "version": "0.1.3",
+  "description": "Show contiguous position numbers in named Herdr tab labels.",
   "license": "MIT",
   "repository": {
     "type": "git",
