@@ -1,7 +1,7 @@
-import type { HerdrClientPort } from '../application/ports/herdr-client-port.ts';
-import type { Tab, Workspace } from '../domain/models.ts';
-import { HerdrCommandError } from '../errors/herdr-command-error.ts';
-import { NodeCommandRunner, type CommandRunner } from './command-runner.ts';
+import type { HerdrClientPort } from '#tab-numbers/application/ports/herdr-client-port';
+import type { Tab, Workspace } from '#tab-numbers/domain/models';
+import { HerdrCommandError } from '#tab-numbers/errors/herdr-command-error';
+import { NodeCommandRunner, type CommandRunner } from '#tab-numbers/infrastructure/command-runner';
 
 type JsonObject = Record<string, unknown>;
 

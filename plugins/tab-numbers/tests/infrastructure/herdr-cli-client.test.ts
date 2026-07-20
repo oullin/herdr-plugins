@@ -1,17 +1,26 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { HerdrCommandError } from '../../src/errors/herdr-command-error.ts';
-import type { CommandResult, CommandRunner } from '../../src/infrastructure/command-runner.ts';
-import { HerdrCliClient } from '../../src/infrastructure/herdr-cli-client.ts';
+import { HerdrCommandError } from '#tab-numbers/errors/herdr-command-error';
+import type { CommandResult, CommandRunner } from '#tab-numbers/infrastructure/command-runner';
+import { HerdrCliClient } from '#tab-numbers/infrastructure/herdr-cli-client';
+
+interface CommandCall {
+	readonly binPath: string;
+	readonly args: readonly string[];
+}
 
 class StubCommandRunner implements CommandRunner {
+	readonly calls: CommandCall[] = [];
+
 	private readonly result: CommandResult;
 
 	constructor(result: CommandResult) {
 		this.result = result;
 	}
 
-	run(): CommandResult {
+	run(binPath: string, args: readonly string[]): CommandResult {
+		this.calls.push({ binPath, args });
+
 		return this.result;
 	}
 }
@@ -34,6 +43,12 @@ describe('HerdrCliClient', () => {
 		expect(
 			client.listTabs('w1'),
 		).toEqual([{ tab_id: 'w1:tE', workspace_id: 'w1', label: 'alloy · 7', number: 14 }]);
+		expect(runner.calls).toEqual([
+			{
+				binPath: '/mock/herdr',
+				args: ['tab', 'list', '--workspace', 'w1'],
+			},
+		]);
 	});
 
 	it('reports malformed JSON', () => {

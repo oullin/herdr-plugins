@@ -1,6 +1,6 @@
-import type { Tab } from '../domain/models.ts';
-import { TabNumberFormatter } from '../domain/tab-number-formatter.ts';
-import type { HerdrClientPort } from './ports/herdr-client-port.ts';
+import type { HerdrClientPort } from '#tab-numbers/application/ports/herdr-client-port';
+import type { Tab } from '#tab-numbers/domain/models';
+import { TabNumberFormatter } from '#tab-numbers/domain/tab-number-formatter';
 
 export class TabNumberSynchronizer {
 	private readonly client: HerdrClientPort;

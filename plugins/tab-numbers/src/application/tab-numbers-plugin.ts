@@ -1,5 +1,5 @@
-import { HerdrCommandError } from '../errors/herdr-command-error.ts';
-import type { TabNumberSynchronizer } from './tab-number-synchronizer.ts';
+import type { TabNumberSynchronizer } from '#tab-numbers/application/tab-number-synchronizer';
+import { HerdrCommandError } from '#tab-numbers/errors/herdr-command-error';
 
 type JsonObject = Record<string, unknown>;
 

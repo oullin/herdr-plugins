@@ -1,19 +1,19 @@
 import { pathToFileURL } from 'node:url';
 
-import { TabNumberSynchronizer } from './src/application/tab-number-synchronizer.ts';
-import { TabNumbersPlugin } from './src/application/tab-numbers-plugin.ts';
-import { HerdrCliClient } from './src/infrastructure/herdr-cli-client.ts';
-import { TabNumbersApplication } from './src/presentation/tab-numbers-application.ts';
+import { TabNumberSynchronizer } from '#tab-numbers/application/tab-number-synchronizer';
+import { TabNumbersPlugin } from '#tab-numbers/application/tab-numbers-plugin';
+import { HerdrCliClient } from '#tab-numbers/infrastructure/herdr-cli-client';
+import { TabNumbersApplication } from '#tab-numbers/presentation/tab-numbers-application';
 
-export { type HerdrClientPort } from './src/application/ports/herdr-client-port.ts';
-export { TabNumberSynchronizer } from './src/application/tab-number-synchronizer.ts';
-export { TabNumbersPlugin, type Environment } from './src/application/tab-numbers-plugin.ts';
-export { type Tab, type Workspace } from './src/domain/models.ts';
-export { TabNumberFormatter } from './src/domain/tab-number-formatter.ts';
-export { HerdrCommandError } from './src/errors/herdr-command-error.ts';
-export { type CommandResult, type CommandRunner, NodeCommandRunner } from './src/infrastructure/command-runner.ts';
-export { HerdrCliClient } from './src/infrastructure/herdr-cli-client.ts';
-export { TabNumbersApplication } from './src/presentation/tab-numbers-application.ts';
+export { type HerdrClientPort } from '#tab-numbers/application/ports/herdr-client-port';
+export { TabNumberSynchronizer } from '#tab-numbers/application/tab-number-synchronizer';
+export { TabNumbersPlugin, type Environment } from '#tab-numbers/application/tab-numbers-plugin';
+export { type Tab, type Workspace } from '#tab-numbers/domain/models';
+export { TabNumberFormatter } from '#tab-numbers/domain/tab-number-formatter';
+export { HerdrCommandError } from '#tab-numbers/errors/herdr-command-error';
+export { type CommandResult, type CommandRunner, NodeCommandRunner } from '#tab-numbers/infrastructure/command-runner';
+export { HerdrCliClient } from '#tab-numbers/infrastructure/herdr-cli-client';
+export { TabNumbersApplication } from '#tab-numbers/presentation/tab-numbers-application';
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
 	const client = new HerdrCliClient();

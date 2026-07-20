@@ -12,4 +12,6 @@ Each plugin must include:
 
 Runtime commands should call Herdr through `HERDR_BIN_PATH`, use argv arrays in the manifest, and avoid shell-specific behavior so the plugin works on Linux, macOS, and Windows.
 
+Each plugin package must define native Node.js ESM aliases in its `imports` map, grouped by architectural concern. Production and test modules must use those aliases; relative module specifiers are not allowed.
+
 Add new plugin packages to the root catalog and keep their tests runnable through `vp test`. Shared development-only code can live in `packages/*`; repository tooling can live in `tools/*`.

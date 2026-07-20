@@ -1,5 +1,5 @@
-import type { HerdrClientPort } from '../../src/application/ports/herdr-client-port.ts';
-import type { Tab, Workspace } from '../../src/domain/models.ts';
+import type { HerdrClientPort } from '#tab-numbers/application/ports/herdr-client-port';
+import type { Tab, Workspace } from '#tab-numbers/domain/models';
 
 export class FakeHerdrClient implements HerdrClientPort {
 	readonly renameCalls: Array<readonly [string, string]> = [];

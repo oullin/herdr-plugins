@@ -1,4 +1,4 @@
-import type { Environment, TabNumbersPlugin } from '../application/tab-numbers-plugin.ts';
+import type { Environment, TabNumbersPlugin } from '#tab-numbers/application/tab-numbers-plugin';
 
 export class TabNumbersApplication {
 	private readonly plugin: TabNumbersPlugin;

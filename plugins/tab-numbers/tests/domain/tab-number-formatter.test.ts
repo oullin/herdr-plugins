@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { TabNumberFormatter } from '../../src/domain/tab-number-formatter.ts';
+import { TabNumberFormatter } from '#tab-numbers/domain/tab-number-formatter';
 
 describe('TabNumberFormatter', () => {
 	const formatter = new TabNumberFormatter();

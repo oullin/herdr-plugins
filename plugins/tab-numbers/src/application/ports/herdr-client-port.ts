@@ -1,4 +1,4 @@
-import type { Tab, Workspace } from '../../domain/models.ts';
+import type { Tab, Workspace } from '#tab-numbers/domain/models';
 
 export interface HerdrClientPort {
 	listWorkspaces(): readonly Workspace[];

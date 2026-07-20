@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { TabNumberSynchronizer } from '../../src/application/tab-number-synchronizer.ts';
-import { FakeHerdrClient } from '../support/fake-herdr-client.ts';
+import { TabNumberSynchronizer } from '#tab-numbers/application/tab-number-synchronizer';
+import { FakeHerdrClient } from '#tab-numbers/testing/support/fake-herdr-client';
 
 describe('TabNumberSynchronizer', () => {
 	it('reapplies the contiguous suffix after a manual rename', () => {

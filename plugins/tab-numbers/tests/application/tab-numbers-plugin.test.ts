@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { TabNumberSynchronizer } from '../../src/application/tab-number-synchronizer.ts';
-import { TabNumbersPlugin } from '../../src/application/tab-numbers-plugin.ts';
-import type { Tab } from '../../src/domain/models.ts';
-import { HerdrCommandError } from '../../src/errors/herdr-command-error.ts';
-import { FakeHerdrClient } from '../support/fake-herdr-client.ts';
+import { TabNumberSynchronizer } from '#tab-numbers/application/tab-number-synchronizer';
+import { TabNumbersPlugin } from '#tab-numbers/application/tab-numbers-plugin';
+import type { Tab } from '#tab-numbers/domain/models';
+import { HerdrCommandError } from '#tab-numbers/errors/herdr-command-error';
+import { FakeHerdrClient } from '#tab-numbers/testing/support/fake-herdr-client';
 
 class MissingTabClient extends FakeHerdrClient {
 	override getTab(): Tab {
