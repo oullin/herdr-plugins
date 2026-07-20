@@ -1,5 +1,9 @@
 import { PANEL_GROUPS, type BindingDescription, type BindingGroup } from '#tmux-keybindings/domain/keybinding-profile';
 
+const maximumChordWidth = 12;
+const minimumChordWidth = 7;
+const chordWidthRatio = 0.28;
+
 export class BindingsPanelRenderer {
 	render(width: number, height: number): string {
 		const safeWidth = Math.max(20, width);
@@ -44,7 +48,7 @@ export class BindingsPanelRenderer {
 	}
 
 	private bindingLine(binding: BindingDescription, width: number): string {
-		const chordWidth = Math.min(12, Math.max(7, Math.floor(width * 0.28)));
+		const chordWidth = Math.min(maximumChordWidth, Math.max(minimumChordWidth, Math.floor(width * chordWidthRatio)));
 
 		return `${binding.chord.padEnd(chordWidth)} ${binding.description}`;
 	}

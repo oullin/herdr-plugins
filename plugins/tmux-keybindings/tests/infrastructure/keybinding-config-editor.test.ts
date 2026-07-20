@@ -19,6 +19,15 @@ describe('KeybindingConfigEditor', () => {
 		expect(edit.snapshot.assignments['prefix']).toBe('prefix = "ctrl+a" # keep this explanation');
 	});
 
+	it('distinguishes comments from hashes inside literal strings', () => {
+		const source = ['[keys]', "prefix = 'ctrl+#' # keep this explanation", ''].join('\n');
+
+		const edit = editor.apply(source, '/config.toml');
+
+		expect(edit.content).toContain('prefix = "ctrl+b" # keep this explanation');
+		expect(edit.snapshot.assignments['prefix']).toBe("prefix = 'ctrl+#' # keep this explanation");
+	});
+
 	it('inserts a keys section and deduplicates the managed custom command', () => {
 		const source = [
 			'[theme]',
