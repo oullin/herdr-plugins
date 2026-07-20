@@ -26,6 +26,8 @@ herdr plugin action invoke oullin.tab-numbers.sync
 
 The `tab.created` and `tab.renamed` hooks keep new and renamed tabs synchronized. The plugin is strict, class-based TypeScript executed natively by Node.js 24, remains dependency-free, and calls Herdr through the injected `HERDR_BIN_PATH`.
 
+The runtime follows explicit SOLID-oriented boundaries: domain formatting, application orchestration and ports, Herdr CLI infrastructure, process presentation, and a small `index.ts` composition root. Tests mirror those concerns under `tests/` and share only focused test doubles.
+
 ## Development
 
 From the repository root:
