@@ -1,9 +1,21 @@
 id = "oullin.tmux-keybindings"
 name = "Tmux Keybindings"
-version = "0.1.0"
+version = "0.1.1"
 min_herdr_version = "0.7.0"
 description = "Apply a canonical tmux keymap and toggle a persistent binding panel"
 platforms = ["linux", "macos", "windows"]
+
+[[build]]
+command = [
+  "npm",
+  "install",
+  "--omit=dev",
+  "--ignore-scripts",
+  "--no-audit",
+  "--no-fund",
+  "--no-package-lock",
+  "--workspaces=false",
+]
 
 [[actions]]
 id = "apply"

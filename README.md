@@ -11,6 +11,10 @@ Focused, independently installable plugins for [Herdr](https://herdr.dev/).
 
 Herdr installs plugins from repository subdirectories, so this repository has one marketplace listing while each plugin remains independently installable.
 
+## Plugin SDK
+
+[`@oullin/herdr-plugin-core`](packages/plugin-core) is the private, repository-local runtime SDK shared by these plugins. Each plugin declares it through a `file:` dependency, and Herdr installs that dependency from the same managed repository checkout.
+
 ## Development
 
 Requirements:

@@ -24,9 +24,9 @@ Synchronise tabs that already exist:
 herdr plugin action invoke oullin.tab-numbers.sync
 ```
 
-The `tab.created`, `tab.renamed`, `tab.closed`, and `tab.moved` hooks keep the sequence contiguous as tabs change. The plugin is strict, class-based TypeScript executed natively by Node.js 24, remains dependency-free, and calls Herdr through the injected `HERDR_BIN_PATH`.
+The `tab.created`, `tab.renamed`, `tab.closed`, and `tab.moved` hooks keep the sequence contiguous as tabs change. Installation links the repository-local `@oullin/herdr-plugin-core` package from the same Herdr-managed checkout. The strict, class-based TypeScript executes natively with Node.js 24 and calls Herdr through the injected `HERDR_BIN_PATH`.
 
-The runtime follows explicit SOLID-oriented boundaries: domain formatting, application orchestration and ports, Herdr CLI infrastructure, process presentation, and a small `index.ts` composition root. Native `#tab-numbers/<concern>/*` ESM aliases enforce those boundaries without relative imports. Tests mirror the production concerns under `tests/` and share only focused test doubles.
+The runtime follows explicit SOLID-oriented boundaries: domain formatting, application orchestration and ports, shared Herdr infrastructure, process presentation, and a small `index.ts` composition root. Native `#tab-numbers/<concern>/*` ESM aliases enforce those boundaries without relative imports. Tests mirror the production concerns under `tests/` and use the core package's focused test doubles.
 
 ## Development
 

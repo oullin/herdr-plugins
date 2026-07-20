@@ -1,10 +1,8 @@
-import { existsSync, mkdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
-import { basename, dirname, join } from 'node:path';
-
 import type { HerdrClientPort } from '#tmux-keybindings/application/ports/herdr-client-port';
 import type { StateRepositoryPort } from '#tmux-keybindings/application/ports/state-repository-port';
 import type { ConfigPathResolver } from '#tmux-keybindings/infrastructure/config-path-resolver';
 import type { KeybindingConfigEditor } from '#tmux-keybindings/infrastructure/keybinding-config-editor';
+import { AtomicFileStore } from '@oullin/herdr-plugin-core';
 
 export type ConfigurationResult = 'applied' | 'unchanged' | 'restored' | 'not-applied' | 'automatic-disabled';
 
@@ -13,12 +11,14 @@ export class ConfigurationManager {
 	private readonly editor: KeybindingConfigEditor;
 	private readonly pathResolver: ConfigPathResolver;
 	private readonly state: StateRepositoryPort;
+	private readonly files: AtomicFileStore;
 
-	constructor(client: HerdrClientPort, editor: KeybindingConfigEditor, pathResolver: ConfigPathResolver, state: StateRepositoryPort) {
+	constructor(client: HerdrClientPort, editor: KeybindingConfigEditor, pathResolver: ConfigPathResolver, state: StateRepositoryPort, files: AtomicFileStore = new AtomicFileStore()) {
 		this.client = client;
 		this.editor = editor;
 		this.pathResolver = pathResolver;
 		this.state = state;
+		this.files = files;
 	}
 
 	apply(environment: Readonly<Record<string, string | undefined>> = process.env, automatic = false): ConfigurationResult {
@@ -27,8 +27,8 @@ export class ConfigurationManager {
 		}
 
 		const configPath = this.pathResolver.resolve(environment);
-		const originalExists = existsSync(configPath);
-		const original = originalExists ? readFileSync(configPath, 'utf8') : '';
+		const originalExists = this.files.exists(configPath);
+		const original = this.files.read(configPath) ?? '';
 		const edit = this.editor.apply(original, configPath);
 		const savedSnapshot = this.state.loadConfigurationSnapshot(configPath);
 
@@ -55,8 +55,8 @@ export class ConfigurationManager {
 			return 'not-applied';
 		}
 
-		const originalExists = existsSync(configPath);
-		const original = originalExists ? readFileSync(configPath, 'utf8') : '';
+		const originalExists = this.files.exists(configPath);
+		const original = this.files.read(configPath) ?? '';
 		const restored = this.editor.restore(original, snapshot);
 
 		this.writeAndValidate(configPath, original, originalExists, restored);
@@ -68,37 +68,20 @@ export class ConfigurationManager {
 	}
 
 	private writeAndValidate(configPath: string, original: string, originalExists: boolean, candidate: string): void {
-		this.writeAtomically(configPath, candidate, originalExists ? statSync(configPath).mode : 0o600);
+		const originalMode = this.files.mode(configPath);
+
+		this.files.write(configPath, candidate, originalMode);
 
 		try {
 			this.client.validateConfig(configPath);
 		} catch (error) {
 			if (originalExists) {
-				this.writeAtomically(configPath, original, statSync(configPath).mode);
-			} else if (existsSync(configPath)) {
-				unlinkSync(configPath);
+				this.files.write(configPath, original, originalMode);
+			} else {
+				this.files.delete(configPath);
 			}
 
 			throw error;
 		}
-	}
-
-	private writeAtomically(path: string, content: string, mode: number): void {
-		mkdirSync(
-			dirname(path),
-			{ recursive: true },
-		);
-
-		const temporaryPath = join(
-			dirname(path),
-			`.${basename(path)}.${process.pid}.tmp`,
-		);
-
-		writeFileSync(
-			temporaryPath,
-			content,
-			{ encoding: 'utf8', mode },
-		);
-		renameSync(temporaryPath, path);
 	}
 }

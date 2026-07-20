@@ -1,10 +1,4 @@
-export type Environment = Readonly<Record<string, string | undefined>>;
-
-export interface Pane {
-	readonly pane_id: string;
-	readonly tab_id: string;
-	readonly workspace_id: string;
-}
+export type { Environment, Pane } from '@oullin/herdr-plugin-core';
 
 export interface ConfigurationSnapshot {
 	readonly version: 1;

@@ -1,9 +1,21 @@
 id = "oullin.tab-numbers"
 name = "Tab Numbers"
-version = "0.1.5"
+version = "0.1.6"
 min_herdr_version = "0.7.0"
 description = "Show contiguous position numbers in named Herdr tab labels"
 platforms = ["linux", "macos", "windows"]
+
+[[build]]
+command = [
+  "npm",
+  "install",
+  "--omit=dev",
+  "--ignore-scripts",
+  "--no-audit",
+  "--no-fund",
+  "--no-package-lock",
+  "--workspaces=false",
+]
 
 [[actions]]
 id = "sync"

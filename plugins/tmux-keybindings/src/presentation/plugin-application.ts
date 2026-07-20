@@ -2,6 +2,7 @@ import type { ConfigurationManager } from '#tmux-keybindings/application/configu
 import type { PanelToggle } from '#tmux-keybindings/application/panel-toggle';
 import type { Environment } from '#tmux-keybindings/domain/models';
 import { PluginError } from '#tmux-keybindings/errors/plugin-error';
+import { executePlugin } from '@oullin/herdr-plugin-core';
 
 export class PluginApplication {
 	private readonly configuration: ConfigurationManager;
@@ -13,37 +14,29 @@ export class PluginApplication {
 	}
 
 	run(action: string | undefined, environment: Environment = process.env, automatic = false): void {
-		try {
-			switch (action) {
-				case 'apply': {
-					const result = this.configuration.apply(environment, automatic);
+		executePlugin(
+			() => {
+					switch (action) {
+						case 'apply': {
+							return `Tmux keybindings: ${this.configuration.apply(environment, automatic)}`;
+						}
 
-					process.stdout.write(`Tmux keybindings: ${result}\n`);
-					break;
-				}
+						case 'restore': {
+							return `Tmux keybindings: ${this.configuration.restore(environment)}`;
+						}
 
-				case 'restore': {
-					const result = this.configuration.restore(environment);
+						case 'toggle': {
+							return `Tmux keybinding panel: ${this.panelToggle.toggle(environment)}`;
+						}
 
-					process.stdout.write(`Tmux keybindings: ${result}\n`);
-					break;
-				}
-
-				case 'toggle': {
-					const result = this.panelToggle.toggle(environment);
-
-					process.stdout.write(`Tmux keybinding panel: ${result}\n`);
-					break;
-				}
-
-				default:
-					throw new PluginError(`Unknown tmux-keybindings action: ${action ?? '(missing)'}`);
-			}
-		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
-
-			process.stderr.write(`Tmux keybindings failed: ${message}\n`);
-			process.exitCode = 1;
-		}
+						default:
+							throw new PluginError(`Unknown tmux-keybindings action: ${action ?? '(missing)'}`);
+					}
+				},
+			{
+					failurePrefix: 'Tmux keybindings failed',
+					successMessage: (message) => message,
+				},
+		);
 	}
 }

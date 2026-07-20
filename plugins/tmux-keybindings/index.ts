@@ -27,6 +27,7 @@ export { StateDirectoryResolver } from '#tmux-keybindings/infrastructure/state-d
 export { BindingsPanelApplication } from '#tmux-keybindings/presentation/bindings-panel-application';
 export { BindingsPanelRenderer } from '#tmux-keybindings/presentation/bindings-panel-renderer';
 export { PluginApplication } from '#tmux-keybindings/presentation/plugin-application';
+export { AtomicFileStore, HerdrConfigPathResolver, JsonFileStore, PluginContext, PluginStateDirectoryResolver } from '@oullin/herdr-plugin-core';
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
 	const action = process.argv[2];

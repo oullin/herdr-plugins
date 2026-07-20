@@ -1,4 +1,5 @@
 import type { Environment, TabNumbersPlugin } from '#tab-numbers/application/tab-numbers-plugin';
+import { executePlugin } from '@oullin/herdr-plugin-core';
 
 export class TabNumbersApplication {
 	private readonly plugin: TabNumbersPlugin;
@@ -8,15 +9,12 @@ export class TabNumbersApplication {
 	}
 
 	execute(environment: Environment = process.env): void {
-		try {
-			const changed = this.plugin.run(environment);
-
-			process.stdout.write(`Tab numbers synchronised (${changed} changed)\n`);
-		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
-
-			process.stderr.write(`Tab number synchronisation failed: ${message}\n`);
-			process.exitCode = 1;
-		}
+		executePlugin(
+			() => this.plugin.run(environment),
+			{
+				failurePrefix: 'Tab number synchronisation failed',
+				successMessage: (changed) => `Tab numbers synchronised (${changed} changed)`,
+			},
+		);
 	}
 }

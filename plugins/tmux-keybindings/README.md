@@ -70,7 +70,7 @@ herdr plugin action invoke oullin.tmux-keybindings.apply
 herdr plugin log list --plugin oullin.tmux-keybindings
 ```
 
-The plugin is dependency-free, strict TypeScript executed natively by Node.js 24, and calls Herdr through the injected `HERDR_BIN_PATH`.
+Installation links the repository-local `@oullin/herdr-plugin-core` package from the same Herdr-managed checkout. The plugin is strict TypeScript executed natively by Node.js 24 and calls Herdr through the injected `HERDR_BIN_PATH`.
 
 ## Licence
 
