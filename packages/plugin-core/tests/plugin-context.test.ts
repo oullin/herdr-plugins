@@ -29,4 +29,22 @@ describe('PluginContext', () => {
 
 		expect(() => context.tabId()).toThrowError(new HerdrCommandError('HERDR_PLUGIN_EVENT_JSON contains malformed JSON'));
 	});
+
+	it('caches event data across identifier lookups', () => {
+		const environment: Record<string, string | undefined> = {
+			HERDR_PLUGIN_EVENT_JSON: JSON.stringify({ data: { workspace_id: 'w1', tab_id: 't1' } }),
+		};
+
+		const context = new PluginContext(environment);
+
+		expect(
+			context.workspaceId(),
+		).toBe('w1');
+
+		environment['HERDR_PLUGIN_EVENT_JSON'] = '{changed-after-first-read';
+
+		expect(
+			context.tabId(),
+		).toBe('t1');
+	});
 });

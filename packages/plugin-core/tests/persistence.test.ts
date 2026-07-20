@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, statSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -34,5 +34,24 @@ describe('atomic persistence', () => {
 		expect(
 			readFileSync(jsonPath, 'utf8'),
 		).toBe('{\n  "enabled": true\n}\n');
+	});
+
+	it('removes temporary files when an atomic replacement fails', () => {
+		const directory = mkdtempSync(
+			join(
+				tmpdir(),
+				'herdr-plugin-core-',
+			),
+		);
+
+		const target = join(directory, 'existing-directory');
+		const files = new AtomicFileStore();
+
+		mkdirSync(target);
+
+		expect(() => files.write(target, 'value')).toThrow();
+		expect(
+			readdirSync(directory),
+		).toEqual(['existing-directory']);
 	});
 });

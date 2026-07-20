@@ -4,6 +4,7 @@ import type { Environment, JsonObject } from '#herdr-plugin-core/models';
 
 export class PluginContext {
 	readonly environment: Environment;
+	private eventDataCache: JsonObject | null | undefined;
 
 	constructor(environment: Environment = process.env) {
 		this.environment = environment;
@@ -26,9 +27,15 @@ export class PluginContext {
 	}
 
 	eventData(): JsonObject | undefined {
+		if (this.eventDataCache !== undefined) {
+			return this.eventDataCache ?? undefined;
+		}
+
 		const eventJson = this.environment['HERDR_PLUGIN_EVENT_JSON'];
 
 		if (!eventJson) {
+			this.eventDataCache = null;
+
 			return undefined;
 		}
 
@@ -40,7 +47,11 @@ export class PluginContext {
 			throw new HerdrCommandError('HERDR_PLUGIN_EVENT_JSON contains malformed JSON', { cause: error });
 		}
 
-		return isJsonObject(event) && isJsonObject(event['data']) ? event['data'] : undefined;
+		const data = isJsonObject(event) && isJsonObject(event['data']) ? event['data'] : undefined;
+
+		this.eventDataCache = data ?? null;
+
+		return data;
 	}
 
 	private identifier(name: 'pane_id' | 'tab_id' | 'workspace_id'): string | undefined {

@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 
 export class AtomicFileStore {
@@ -30,12 +30,27 @@ export class AtomicFileStore {
 			content,
 			{ encoding: 'utf8', mode },
 		);
-		renameSync(temporaryPath, path);
+
+		try {
+			renameSync(temporaryPath, path);
+		} catch (error) {
+			try {
+				rmSync(
+					temporaryPath,
+					{ force: true },
+				);
+			} catch {
+				// Keep the original rename failure.
+			}
+
+			throw error;
+		}
 	}
 
 	delete(path: string): void {
-		if (existsSync(path)) {
-			unlinkSync(path);
-		}
+		rmSync(
+			path,
+			{ force: true },
+		);
 	}
 }
