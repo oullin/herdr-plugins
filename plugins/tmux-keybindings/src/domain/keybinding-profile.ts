@@ -21,7 +21,7 @@ export const PANE_ENTRYPOINT = 'bindings';
 
 export const KEYBINDING_PROFILE: readonly KeybindingAssignment[] = [
 	{ key: 'prefix', value: 'ctrl+b' },
-	{ key: 'help', value: '' },
+	{ key: 'help', value: 'prefix+?' },
 	{ key: 'detach', value: 'prefix+d' },
 	{ key: 'new_tab', value: 'prefix+c' },
 	{ key: 'rename_tab', value: 'prefix+comma' },
@@ -48,7 +48,8 @@ export const PANEL_GROUPS: readonly BindingGroup[] = [
 		title: 'Global',
 		bindings: [
 			{ chord: 'Ctrl+B', description: 'prefix' },
-			{ chord: '?', description: 'toggle this panel' },
+			{ chord: 'Ctrl+B /', description: 'open / close this panel' },
+			{ chord: '?', description: 'keybinds' },
 			{ chord: 'd', description: 'detach' },
 			{ chord: 'w', description: 'workspace navigation' },
 		],

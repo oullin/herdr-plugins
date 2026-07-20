@@ -34,9 +34,7 @@ export class ConfigurationManager {
 
 		this.writeAndValidate(configPath, original, originalExists, edit.content);
 
-		if (!savedSnapshot) {
-			this.state.saveConfigurationSnapshot(edit.snapshot);
-		}
+		this.state.saveConfigurationSnapshot(this.editor.mergeSnapshots(savedSnapshot, edit.snapshot));
 
 		if (!automatic) {
 			this.state.setAutomaticApplyDisabled(false);
