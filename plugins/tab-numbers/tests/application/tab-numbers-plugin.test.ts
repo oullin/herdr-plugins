@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { TabNumberSynchronizer } from '#tab-numbers/application/tab-number-synchronizer';
+import { TabNumberSynchroniser } from '#tab-numbers/application/tab-number-synchroniser';
 import { TabNumbersPlugin } from '#tab-numbers/application/tab-numbers-plugin';
 import type { Tab } from '#tab-numbers/domain/models';
 import { HerdrCommandError } from '#tab-numbers/errors/herdr-command-error';
@@ -27,7 +27,7 @@ describe('TabNumbersPlugin', () => {
 			tabsByWorkspace: new Map([['w1', tabs]]),
 		});
 
-		const plugin = new TabNumbersPlugin(new TabNumberSynchronizer(client));
+		const plugin = new TabNumbersPlugin(new TabNumberSynchroniser(client));
 
 		expect(
 			plugin.run({ HERDR_PLUGIN_EVENT: event, HERDR_TAB_ID: 'w1:t7' }),
@@ -52,7 +52,7 @@ describe('TabNumbersPlugin', () => {
 			]),
 		});
 
-		const plugin = new TabNumbersPlugin(new TabNumberSynchronizer(client));
+		const plugin = new TabNumbersPlugin(new TabNumberSynchroniser(client));
 
 		expect(
 			plugin.run({ HERDR_PLUGIN_EVENT: event, HERDR_WORKSPACE_ID: 'w1' }),
@@ -67,7 +67,7 @@ describe('TabNumbersPlugin', () => {
 
 	it('treats a tab closed before its queued hook runs as a no-op', () => {
 		const client = new MissingTabClient();
-		const plugin = new TabNumbersPlugin(new TabNumberSynchronizer(client));
+		const plugin = new TabNumbersPlugin(new TabNumberSynchroniser(client));
 
 		expect(
 			plugin.run({ HERDR_PLUGIN_EVENT: 'tab.renamed', HERDR_TAB_ID: 'w1:t8' }),
@@ -75,7 +75,7 @@ describe('TabNumbersPlugin', () => {
 	});
 
 	it('reports malformed event JSON when no tab context is available', () => {
-		const plugin = new TabNumbersPlugin(new TabNumberSynchronizer(new FakeHerdrClient()));
+		const plugin = new TabNumbersPlugin(new TabNumberSynchroniser(new FakeHerdrClient()));
 
 		expect(() => plugin.run({ HERDR_PLUGIN_EVENT: 'tab.created', HERDR_PLUGIN_EVENT_JSON: '{not-json' })).toThrowError('HERDR_PLUGIN_EVENT_JSON contains malformed JSON');
 	});

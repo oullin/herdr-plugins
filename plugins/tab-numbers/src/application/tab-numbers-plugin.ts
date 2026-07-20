@@ -1,4 +1,4 @@
-import type { TabNumberSynchronizer } from '#tab-numbers/application/tab-number-synchronizer';
+import type { TabNumberSynchroniser } from '#tab-numbers/application/tab-number-synchroniser';
 import { HerdrCommandError } from '#tab-numbers/errors/herdr-command-error';
 
 type JsonObject = Record<string, unknown>;
@@ -13,17 +13,17 @@ export class TabNumbersPlugin {
 	private static readonly singleTabEvents: ReadonlySet<string> = new Set(['tab.created', 'tab.renamed']);
 	private static readonly workspaceTabEvents: ReadonlySet<string> = new Set(['tab.closed', 'tab.moved']);
 
-	private readonly synchronizer: TabNumberSynchronizer;
+	private readonly synchroniser: TabNumberSynchroniser;
 
-	constructor(synchronizer: TabNumberSynchronizer) {
-		this.synchronizer = synchronizer;
+	constructor(synchroniser: TabNumberSynchroniser) {
+		this.synchroniser = synchroniser;
 	}
 
 	run(environment: Environment = process.env): number {
 		const event = environment['HERDR_PLUGIN_EVENT'];
 
 		if (event === undefined || (!TabNumbersPlugin.singleTabEvents.has(event) && !TabNumbersPlugin.workspaceTabEvents.has(event))) {
-			return this.synchronizer.syncAll();
+			return this.synchroniser.syncAll();
 		}
 
 		if (TabNumbersPlugin.workspaceTabEvents.has(event)) {
@@ -33,7 +33,7 @@ export class TabNumbersPlugin {
 				throw new HerdrCommandError(`${event} did not include a workspace id`);
 			}
 
-			return this.synchronizer.syncWorkspace(workspaceId);
+			return this.synchroniser.syncWorkspace(workspaceId);
 		}
 
 		const tabId = environment['HERDR_TAB_ID'] ?? this.tabIdFromEventJson(environment['HERDR_PLUGIN_EVENT_JSON']);
@@ -44,7 +44,7 @@ export class TabNumbersPlugin {
 
 		try {
 			return Number(
-				this.synchronizer.syncById(tabId),
+				this.synchroniser.syncById(tabId),
 			);
 		} catch (error) {
 			if (error instanceof HerdrCommandError && error.code === 'tab_not_found') {

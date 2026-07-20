@@ -2,7 +2,7 @@ import type { HerdrClientPort } from '#tab-numbers/application/ports/herdr-clien
 import type { Tab } from '#tab-numbers/domain/models';
 import { TabNumberFormatter } from '#tab-numbers/domain/tab-number-formatter';
 
-export class TabNumberSynchronizer {
+export class TabNumberSynchroniser {
 	private readonly client: HerdrClientPort;
 	private readonly formatter: TabNumberFormatter;
 

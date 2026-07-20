@@ -2,7 +2,7 @@
 
 Focused, independently installable plugins for [Herdr](https://herdr.dev/).
 
-## Plugin catalog
+## Plugin catalogue
 
 | Plugin                             | Description                                             | Install                                                         |
 | ---------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------- |
@@ -36,6 +36,6 @@ vp run ready
 
 `make format-all` formats and lints every TypeScript file. `vp run ready` runs `vp check` followed by the complete test suite. See [the plugin conventions](docs/plugin-conventions.md) before adding a package.
 
-## License
+## Licence
 
 [MIT](LICENSE)

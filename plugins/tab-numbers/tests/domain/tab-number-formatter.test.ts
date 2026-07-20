@@ -23,7 +23,7 @@ describe('TabNumberFormatter', () => {
 		).toBe('7');
 	});
 
-	it('normalizes duplicate and stale managed suffixes', () => {
+	it('normalises duplicate and stale managed suffixes', () => {
 		expect(
 			formatter.format('skills · 99 · 4', 1),
 		).toBe('skills · 1');

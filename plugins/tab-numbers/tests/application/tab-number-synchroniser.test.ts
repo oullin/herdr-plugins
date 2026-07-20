@@ -1,30 +1,30 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { TabNumberSynchronizer } from '#tab-numbers/application/tab-number-synchronizer';
+import { TabNumberSynchroniser } from '#tab-numbers/application/tab-number-synchroniser';
 import { FakeHerdrClient } from '#tab-numbers/testing/support/fake-herdr-client';
 
-describe('TabNumberSynchronizer', () => {
+describe('TabNumberSynchroniser', () => {
 	it('reapplies the contiguous suffix after a manual rename', () => {
 		const client = new FakeHerdrClient();
-		const synchronizer = new TabNumberSynchronizer(client);
+		const synchroniser = new TabNumberSynchroniser(client);
 
 		expect(
-			synchronizer.syncTab({ tab_id: 'w1:t5', workspace_id: 'w1', label: 'maker tools', number: 5 }, 3),
+			synchroniser.syncTab({ tab_id: 'w1:t5', workspace_id: 'w1', label: 'maker tools', number: 5 }, 3),
 		).toBe(true);
 		expect(client.renameCalls).toEqual([['w1:t5', 'maker tools · 3']]);
 	});
 
-	it('does not recursively rename an already synchronized tab', () => {
+	it('does not recursively rename an already synchronised tab', () => {
 		const client = new FakeHerdrClient();
-		const synchronizer = new TabNumberSynchronizer(client);
+		const synchroniser = new TabNumberSynchroniser(client);
 
 		expect(
-			synchronizer.syncTab({ tab_id: 'w1:t5', workspace_id: 'w1', label: 'maker tools · 3', number: 5 }, 3),
+			synchroniser.syncTab({ tab_id: 'w1:t5', workspace_id: 'w1', label: 'maker tools · 3', number: 5 }, 3),
 		).toBe(false);
 		expect(client.renameCalls).toEqual([]);
 	});
 
-	it('synchronizes every workspace with contiguous display numbers', () => {
+	it('synchronises every workspace with contiguous display numbers', () => {
 		const client = new FakeHerdrClient({
 			workspaces: [{ workspace_id: 'w1' }, { workspace_id: 'w9' }],
 			tabsByWorkspace: new Map([
@@ -41,7 +41,7 @@ describe('TabNumberSynchronizer', () => {
 		});
 
 		expect(
-			new TabNumberSynchronizer(client).syncAll(),
+			new TabNumberSynchroniser(client).syncAll(),
 		).toBe(3);
 		expect(client.renameCalls).toEqual([
 			['w1:t1', 'skills · 1'],

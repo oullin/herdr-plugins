@@ -10,7 +10,7 @@ gocanto.sh · 2
 oullin-web · 3
 ```
 
-Numeric auto-generated labels are left untouched. A trailing ` · <digits>` is reserved for this plugin; stale or duplicate suffixes are normalized to the tab's current position. Manual renames receive the suffix again automatically.
+Numeric auto-generated labels are left untouched. A trailing ` · <digits>` is reserved for this plugin; stale or duplicate suffixes are normalised to the tab's current position. Manual renames receive the suffix again automatically.
 
 ## Install
 
@@ -18,7 +18,7 @@ Numeric auto-generated labels are left untouched. A trailing ` · <digits>` is r
 herdr plugin install oullin/herdr-plugins/plugins/tab-numbers
 ```
 
-Synchronize tabs that already exist:
+Synchronise tabs that already exist:
 
 ```sh
 herdr plugin action invoke oullin.tab-numbers.sync
@@ -40,6 +40,6 @@ herdr plugin action invoke oullin.tab-numbers.sync
 herdr plugin log list --plugin oullin.tab-numbers
 ```
 
-## License
+## Licence
 
 [MIT](LICENSE)
