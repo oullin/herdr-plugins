@@ -98,6 +98,38 @@ describe('KeybindingConfigEditor', () => {
 		expect(restored).toBe(source.replace('settings = "prefix+s"', 'settings = "ctrl+s"'));
 	});
 
+	it('restores multiple displaced commands at their original positions', () => {
+		const source = [
+			'[keys]',
+			'prefix = "ctrl+a"',
+			'settings = "prefix+s"',
+			'',
+			'[[keys.command]]',
+			'key = "prefix+/"',
+			'type = "shell"',
+			'command = "first-panel"',
+			'',
+			'[[keys.command]]',
+			'key = "prefix+t"',
+			'type = "popup"',
+			'command = "lazygit"',
+			'',
+			'[[keys.command]]',
+			'key = "prefix+/"',
+			'type = "shell"',
+			'command = "second-panel"',
+			'',
+		].join('\n');
+
+		const edit = editor.apply(source, '/config.toml');
+		const restored = editor.restore(edit.content, edit.snapshot);
+
+		expect(
+			edit.snapshot.displacedCommands.map((command) => command.line),
+		).toEqual([4, 14]);
+		expect(restored).toBe(source);
+	});
+
 	it('upgrades version-one snapshots without losing first-install state', () => {
 		const legacyHelp = ['[[keys.command]]', 'key = "prefix+?"', 'type = "shell"', 'command = "old-help"', ''].join('\n');
 		const legacyPluginAction = ['[[keys.command]]', 'key = "prefix+?"', 'type = "plugin_action"', 'command = "oullin.tmux-keybindings.toggle"', ''].join('\n');

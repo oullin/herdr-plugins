@@ -75,7 +75,7 @@ export class KeybindingConfigEditor {
 			lines = this.removeEmptyKeysSection(lines);
 		}
 
-		for (const command of snapshot.displacedCommands.filter((candidate) => !this.isPluginCommand(candidate.text)).sort((left, right) => left.line - right.line)) {
+		for (const command of snapshot.displacedCommands.filter((candidate) => !this.isPluginCommand(candidate.text)).sort((left, right) => right.line - left.line)) {
 			const insertion = Math.min(command.line, lines.length);
 			const commandLines = command.text.split('\n');
 			const replaceSeparator = commandLines.at(-1) === '' && lines[insertion]?.trim() === '' ? 1 : 0;
