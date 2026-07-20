@@ -1,6 +1,6 @@
 {
   "name": "@oullin/herdr-tab-numbers",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Show stable Herdr tab numbers in named tab labels.",
   "license": "MIT",
   "repository": {
@@ -10,13 +10,13 @@
   },
   "files": [
     "herdr-plugin.toml",
-    "index.mjs",
+    "index.ts",
     "README.md",
     "LICENSE"
   ],
   "type": "module",
-  "exports": "./index.mjs",
+  "exports": "./index.ts",
   "engines": {
-    "node": ">=24.0.0 <25"
+    "node": ">=24.12.0 <25"
   }
 }

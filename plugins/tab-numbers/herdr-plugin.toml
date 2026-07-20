@@ -1,6 +1,6 @@
 id = "oullin.tab-numbers"
 name = "Tab Numbers"
-version = "0.1.0"
+version = "0.1.1"
 min_herdr_version = "0.7.0"
 description = "Show stable Herdr tab numbers in named tab labels"
 platforms = ["linux", "macos", "windows"]
@@ -10,12 +10,12 @@ id = "sync"
 title = "Sync tab numbers"
 description = "Add stable Herdr numbers to every named tab"
 contexts = ["global"]
-command = ["node", "index.mjs"]
+command = ["node", "index.ts"]
 
 [[events]]
 on = "tab.created"
-command = ["node", "index.mjs"]
+command = ["node", "index.ts"]
 
 [[events]]
 on = "tab.renamed"
-command = ["node", "index.mjs"]
+command = ["node", "index.ts"]

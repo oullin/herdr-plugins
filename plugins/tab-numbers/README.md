@@ -24,7 +24,7 @@ Synchronize tabs that already exist:
 herdr plugin action invoke oullin.tab-numbers.sync
 ```
 
-The `tab.created` and `tab.renamed` hooks keep new and renamed tabs synchronized. The plugin is dependency-free Node.js ESM and calls Herdr through the injected `HERDR_BIN_PATH`.
+The `tab.created` and `tab.renamed` hooks keep new and renamed tabs synchronized. The plugin is strict, class-based TypeScript executed natively by Node.js 24, remains dependency-free, and calls Herdr through the injected `HERDR_BIN_PATH`.
 
 ## Development
 

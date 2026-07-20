@@ -13,7 +13,7 @@ export default defineConfig({
     },
   },
   test: {
-    include: ['plugins/**/*.test.mjs'],
+    include: ['plugins/**/*.test.ts'],
   },
   run: {
     cache: {
