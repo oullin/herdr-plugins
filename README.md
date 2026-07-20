@@ -4,9 +4,10 @@ Focused, independently installable plugins for [Herdr](https://herdr.dev/).
 
 ## Plugin catalogue
 
-| Plugin                             | Description                                             | Install                                                         |
-| ---------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------- |
-| [Tab Numbers](plugins/tab-numbers) | Adds each named tab's contiguous position to its label. | `herdr plugin install oullin/herdr-plugins/plugins/tab-numbers` |
+| Plugin                                       | Description                                                    | Install                                                              |
+| -------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [Tab Numbers](plugins/tab-numbers)           | Adds each named tab's contiguous position to its label.        | `herdr plugin install oullin/herdr-plugins/plugins/tab-numbers`      |
+| [Tmux Keybindings](plugins/tmux-keybindings) | Applies tmux-style bindings with a toggleable reference panel. | `herdr plugin install oullin/herdr-plugins/plugins/tmux-keybindings` |
 
 Herdr installs plugins from repository subdirectories, so this repository has one marketplace listing while each plugin remains independently installable.
 

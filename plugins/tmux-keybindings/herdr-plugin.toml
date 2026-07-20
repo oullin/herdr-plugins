@@ -1,0 +1,37 @@
+id = "oullin.tmux-keybindings"
+name = "Tmux Keybindings"
+version = "0.1.0"
+min_herdr_version = "0.7.0"
+description = "Apply a canonical tmux keymap and toggle a persistent binding panel"
+platforms = ["linux", "macos", "windows"]
+
+[[actions]]
+id = "apply"
+title = "Apply tmux keybindings"
+description = "Apply the canonical tmux keybinding profile"
+contexts = ["global"]
+command = ["node", "index.ts", "apply"]
+
+[[actions]]
+id = "toggle"
+title = "Toggle tmux keybinding panel"
+description = "Open or close the keybinding panel for the active tab"
+contexts = ["global"]
+command = ["node", "index.ts", "toggle"]
+
+[[actions]]
+id = "restore"
+title = "Restore keybindings"
+description = "Restore the keybindings replaced by this plugin"
+contexts = ["global"]
+command = ["node", "index.ts", "restore"]
+
+[[events]]
+on = "workspace.created"
+command = ["node", "index.ts", "apply", "--automatic"]
+
+[[panes]]
+id = "bindings"
+title = "Tmux keybindings"
+placement = "split"
+command = ["node", "index.ts", "bindings"]

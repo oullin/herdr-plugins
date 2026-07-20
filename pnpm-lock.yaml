@@ -17,6 +17,8 @@ importers:
 
   plugins/tab-numbers: {}
 
+  plugins/tmux-keybindings: {}
+
 packages:
 
   '@babel/code-frame@7.29.7':
