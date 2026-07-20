@@ -1,6 +1,6 @@
 {
   "name": "@oullin/herdr-tab-numbers",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Show contiguous position numbers in named Herdr tab labels.",
   "license": "MIT",
   "repository": {
@@ -25,6 +25,9 @@
     "#tab-numbers/testing/*": "./tests/*.ts"
   },
   "exports": "./index.ts",
+  "dependencies": {
+    "@oullin/herdr-plugin-core": "file:../../packages/plugin-core"
+  },
   "engines": {
     "node": ">=24.12.0 <25"
   }

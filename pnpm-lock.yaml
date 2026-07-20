@@ -15,7 +15,19 @@ importers:
         specifier: 0.2.5
         version: 0.2.5(@types/node@24.13.3)(vite@8.1.5(@types/node@24.13.3))
 
-  plugins/tab-numbers: {}
+  packages/plugin-core: {}
+
+  plugins/tab-numbers:
+    dependencies:
+      '@oullin/herdr-plugin-core':
+        specifier: file:../../packages/plugin-core
+        version: link:../../packages/plugin-core
+
+  plugins/tmux-keybindings:
+    dependencies:
+      '@oullin/herdr-plugin-core':
+        specifier: file:../../packages/plugin-core
+        version: link:../../packages/plugin-core
 
 packages:
 
