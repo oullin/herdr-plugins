@@ -54,6 +54,6 @@ describe('tmux-keybindings plugin contract', () => {
 			'#tmux-keybindings/testing/*',
 		]);
 		expect(catalogue).toContain('[Tmux Keybindings](plugins/tmux-keybindings)');
-		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../packages/plugin-core' });
+		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../package/core' });
 	});
 });

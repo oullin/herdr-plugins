@@ -26,7 +26,7 @@
   },
   "exports": "./index.ts",
   "dependencies": {
-    "@oullin/herdr-plugin-core": "file:../../packages/plugin-core"
+    "@oullin/herdr-plugin-core": "file:../../package/core"
   },
   "engines": {
     "node": ">=24.12.0 <25"
