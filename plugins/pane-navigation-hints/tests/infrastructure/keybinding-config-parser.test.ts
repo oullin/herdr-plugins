@@ -43,6 +43,18 @@ describe('KeybindingConfigParser', () => {
 		expect(bindings.focusPaneLeft).toBe('ctrl+#');
 	});
 
+	it('parses Windows line endings without retaining carriage returns', () => {
+		const bindings = parser.parse(['[keys]', 'prefix = "ctrl+a"', 'focus_pane_left = "alt+h"', '[ui]', 'focus_pane_right = "not-in-keys"'].join('\r\n'));
+
+		expect(bindings.prefix).toBe('ctrl+a');
+		expect(bindings.focusPaneLeft).toBe('alt+h');
+		expect(bindings.focusPaneRight).toBe(DEFAULT_PANE_NAVIGATION_BINDINGS.focusPaneRight);
+	});
+
+	it.each(['"', "'"])('rejects a lone %s quote as an unterminated value', (quote) => {
+		expect(() => parser.parse(`[keys]\nprefix = ${quote}\n`)).toThrowError('[keys].prefix must be a quoted string');
+	});
+
 	it('rejects unquoted managed values', () => {
 		expect(() => parser.parse('[keys]\nprefix = ctrl+b\n')).toThrowError('[keys].prefix must be a quoted string');
 	});

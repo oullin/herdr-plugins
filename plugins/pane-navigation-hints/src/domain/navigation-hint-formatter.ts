@@ -96,14 +96,14 @@ export class NavigationHintFormatter {
 				.join('+'),
 		);
 
-		return `${renderedHead}+${tails.join('/')}`;
+		return [renderedHead, tails.join('/')].filter(Boolean).join('+');
 	}
 
 	private renderBinding(binding: string, prefix: string): string {
 		const parts = binding.split('+');
 
 		if (parts[0] === 'prefix') {
-			return [this.renderPrefix(prefix), ...parts.slice(1).map((part) => this.renderKey(part))].join('+');
+			return [this.renderPrefix(prefix), ...parts.slice(1).map((part) => this.renderKey(part))].filter(Boolean).join('+');
 		}
 
 		return parts.map((part) => this.renderKey(part)).join('+');

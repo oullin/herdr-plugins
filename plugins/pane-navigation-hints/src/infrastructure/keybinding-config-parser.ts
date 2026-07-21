@@ -9,7 +9,7 @@ const assignmentPattern = /^\s*([A-Za-z0-9_]+)\s*=\s*(.+?)\s*$/u;
 export class KeybindingConfigParser {
 	parse(source: string): PaneNavigationBindings {
 		const bindings = { ...DEFAULT_PANE_NAVIGATION_BINDINGS };
-		const lines = source.split('\n');
+		const lines = source.split(/\r?\n/u);
 		const start = lines.findIndex((line) => keysHeaderPattern.test(line));
 
 		if (start < 0) {
@@ -42,7 +42,7 @@ export class KeybindingConfigParser {
 	private stringValue(rawValue: string, key: string): string {
 		const value = rawValue.trim();
 
-		if (value.startsWith('"') && value.endsWith('"')) {
+		if (value.length >= 2 && value.startsWith('"') && value.endsWith('"')) {
 			try {
 				const parsed = JSON.parse(value) as unknown;
 
@@ -54,7 +54,7 @@ export class KeybindingConfigParser {
 			}
 		}
 
-		if (value.startsWith("'") && value.endsWith("'")) {
+		if (value.length >= 2 && value.startsWith("'") && value.endsWith("'")) {
 			return value.slice(1, -1);
 		}
 

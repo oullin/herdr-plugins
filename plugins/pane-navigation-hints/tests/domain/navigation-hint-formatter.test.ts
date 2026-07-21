@@ -39,6 +39,36 @@ describe('NavigationHintFormatter', () => {
 		).toBe('← Ctrl+B+h → Ctrl+B+l · N Alt+n');
 	});
 
+	it('omits separators before collapsed bindings when the prefix is empty', () => {
+		expect(
+			formatter.format({
+					prefix: '',
+					focusPaneLeft: 'prefix+left',
+					focusPaneDown: 'prefix+down',
+					focusPaneUp: 'prefix+up',
+					focusPaneRight: 'prefix+right',
+					cyclePaneNext: 'prefix+o',
+					cyclePanePrevious: 'prefix+shift+tab',
+					lastPane: 'prefix+;',
+				}),
+		).toBe('←↓↑→ ←/↓/↑/→ · N/P o/Shift+Tab · Last ;');
+	});
+
+	it('omits separators before individual bindings when the prefix is empty', () => {
+		expect(
+			formatter.format({
+					prefix: '',
+					focusPaneLeft: 'prefix+left',
+					focusPaneDown: '',
+					focusPaneUp: '',
+					focusPaneRight: '',
+					cyclePaneNext: 'prefix+tab',
+					cyclePanePrevious: '',
+					lastPane: '',
+				}),
+		).toBe('← ← · N Tab');
+	});
+
 	it('reports when every pane navigation action is unbound', () => {
 		expect(
 			formatter.format({
