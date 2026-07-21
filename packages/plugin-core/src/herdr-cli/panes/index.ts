@@ -23,13 +23,18 @@ export class HerdrPaneClient implements PaneClient {
 
 	getPane(paneId: string): Pane | undefined {
 		const args = ['pane', 'get', paneId];
-		const result = this.transport.execute(args);
 
-		if (result.error || result.status !== 0) {
-			return undefined;
+		try {
+			return this.parse(this.transport.call(args)['pane']);
+		} catch (error) {
+			const commandError = error as HerdrCommandError;
+
+			if (commandError?.code === 'pane_not_found') {
+				return undefined;
+			}
+
+			throw error;
 		}
-
-		return this.parse(this.transport.decodeResult(result.stdout, args)['pane']);
 	}
 
 	reportPaneTitle(paneId: string, update: PaneTitleUpdate): void {
