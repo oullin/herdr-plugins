@@ -1,12 +1,12 @@
 # Tmux Keybindings
 
-Apply a canonical tmux-style keymap to Herdr and open a compact binding reference as a centered modal dialog. Press `Ctrl+B`, then `?` to open it; repeat the chord inside the dialog or press `Esc` to close it.
+Apply a canonical tmux-style keymap to Herdr and open a compact binding reference as a centered modal dialog. Press `Ctrl+B`, then `Super+Q` to open it; repeat the chord inside the dialog or press `Esc` to close it. Herdr's built-in `prefix+?` help binding remains untouched.
 
 The plugin owns only the bindings below. It preserves comments, unrelated settings, and unrelated custom commands in `config.toml`, records the original managed values under `HERDR_PLUGIN_STATE_DIR`, validates every change with `herdr config check`, and rolls back a rejected edit atomically.
 
 | Prefix key | Action                        |
 | ---------- | ----------------------------- |
-| `?`        | Open/close the binding dialog |
+| `Super+Q`  | Open/close the binding dialog |
 | `d`        | Detach                        |
 | `c`        | New tab                       |
 | `,`        | Rename tab                    |
@@ -33,7 +33,7 @@ The apply action follows `HERDR_CONFIG_PATH` when it is set. Otherwise it uses `
 
 ## Open the dialog
 
-Use `Ctrl+B ?`, or invoke the action directly:
+Use `Ctrl+B`, then `Super+Q`, or invoke the action directly:
 
 ```sh
 herdr plugin action invoke oullin.tmux-keybindings.toggle
@@ -43,7 +43,7 @@ The popup is session-modal and leaves the tiled tab layout unchanged. Its header
 
 ## Restore and uninstall
 
-Restore the values and any `prefix+?` custom command that existed before the first apply:
+Restore the values and any `prefix+Super+Q` custom command that existed before the first apply:
 
 ```sh
 herdr plugin action invoke oullin.tmux-keybindings.restore

@@ -29,12 +29,13 @@ export class ConfigurationManager {
 		const configPath = this.pathResolver.resolve(environment);
 		const originalExists = this.files.exists(configPath);
 		const original = this.files.read(configPath) ?? '';
-		const edit = this.editor.apply(original, configPath);
 		const savedSnapshot = this.state.loadConfigurationSnapshot(configPath);
+		const baseline = savedSnapshot?.version === 1 ? this.editor.restore(original, savedSnapshot) : original;
+		const edit = this.editor.apply(baseline, configPath);
 
 		this.writeAndValidate(configPath, original, originalExists, edit.content);
 
-		if (!savedSnapshot) {
+		if (!savedSnapshot || savedSnapshot.version === 1) {
 			this.state.saveConfigurationSnapshot(edit.snapshot);
 		}
 

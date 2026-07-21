@@ -55,15 +55,15 @@ export class BindingsPanelRenderer {
 	}
 
 	private shortcutLines(width: number): readonly string[] {
-		if (width >= 37) {
-			return [this.centre('Prefix Ctrl+B  •  Close Ctrl+B then ?', width)];
+		if (width >= 48) {
+			return [this.centre('Open/close Ctrl+B then Super+Q  •  Esc closes', width)];
 		}
 
-		if (width >= 20) {
-			return [this.centre('Prefix Ctrl+B', width), this.centre('Close Ctrl+B then ?', width)];
+		if (width >= 25) {
+			return [this.centre('Ctrl+B then Super+Q', width), this.centre('Esc closes', width)];
 		}
 
-		return [this.centre('Close Ctrl+B ?', width)];
+		return [this.centre('Esc closes', width)];
 	}
 
 	private sectionHeading(title: string, width: number): string {

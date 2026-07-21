@@ -1,4 +1,4 @@
-import { KEYBINDING_PROFILE, TOGGLE_ACTION_ID } from '#tmux-keybindings/domain/keybinding-profile';
+import { DIALOG_SHORTCUT, KEYBINDING_PROFILE, LEGACY_DIALOG_SHORTCUT, TOGGLE_ACTION_ID } from '#tmux-keybindings/domain/keybinding-profile';
 import type { ConfigurationEdit, ConfigurationSnapshot } from '#tmux-keybindings/domain/models';
 
 interface CommandBlock {
@@ -25,7 +25,7 @@ export class KeybindingConfigEditor {
 
 		const commandBlocks = this.commandBlocks(sourceLines);
 
-		const managedCommandBlocks = commandBlocks.filter((block) => block.key === 'prefix+?' || block.command === TOGGLE_ACTION_ID);
+		const managedCommandBlocks = commandBlocks.filter((block) => block.key === DIALOG_SHORTCUT || block.command === TOGGLE_ACTION_ID);
 		const displacedCommands = managedCommandBlocks.map((block) => ({ line: block.start, text: block.text }));
 
 		let lines = this.removeCommandBlocks(sourceLines, managedCommandBlocks);
@@ -36,7 +36,7 @@ export class KeybindingConfigEditor {
 		return {
 			content: lines.join('\n'),
 			snapshot: {
-				version: 1,
+				version: 2,
 				configPath,
 				keysSectionExisted: keysSection !== undefined,
 				assignments,
@@ -52,7 +52,7 @@ export class KeybindingConfigEditor {
 
 		lines = this.removeCommandBlocks(
 			lines,
-			commandBlocks.filter((block) => block.key === 'prefix+?' || block.command === TOGGLE_ACTION_ID),
+			commandBlocks.filter((block) => block.key === (snapshot.version === 1 ? LEGACY_DIALOG_SHORTCUT : DIALOG_SHORTCUT) || block.command === TOGGLE_ACTION_ID),
 		);
 		lines = this.restoreAssignments(lines, snapshot);
 
@@ -113,9 +113,7 @@ export class KeybindingConfigEditor {
 		let section = this.keysSection(lines);
 
 		if (!section) {
-			const originals = KEYBINDING_PROFILE.flatMap((binding) => {
-				const assignment = snapshot.assignments[binding.key];
-
+			const originals = Object.values(snapshot.assignments).flatMap((assignment) => {
 				return assignment === null || assignment === undefined ? [] : [assignment];
 			});
 
@@ -133,9 +131,8 @@ export class KeybindingConfigEditor {
 
 		const missing: string[] = [];
 
-		for (const binding of KEYBINDING_PROFILE) {
-			const index = this.assignmentIndex(lines, section, binding.key);
-			const original = snapshot.assignments[binding.key];
+		for (const [key, original] of Object.entries(snapshot.assignments)) {
+			const index = this.assignmentIndex(lines, section, key);
 
 			if (original === null || original === undefined) {
 				if (index !== undefined) {
@@ -180,7 +177,13 @@ export class KeybindingConfigEditor {
 	}
 
 	private appendManagedCommand(sourceLines: readonly string[]): string[] {
-		return this.appendBlock(sourceLines, ['[[keys.command]]', 'key = "prefix+?"', 'type = "plugin_action"', `command = "${TOGGLE_ACTION_ID}"`, 'description = "open tmux keybinding dialog"']);
+		return this.appendBlock(sourceLines, [
+			'[[keys.command]]',
+			`key = "${DIALOG_SHORTCUT}"`,
+			'type = "plugin_action"',
+			`command = "${TOGGLE_ACTION_ID}"`,
+			'description = "open tmux keybinding dialog"',
+		]);
 	}
 
 	private appendBlock(sourceLines: readonly string[], block: readonly string[]): string[] {

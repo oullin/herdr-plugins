@@ -1,7 +1,8 @@
 const controlB = 0x02;
 const controlC = 0x03;
 const escape = 0x1b;
-const questionMark = 0x3f;
+const lowerQ = 0x71;
+const upperQ = 0x51;
 
 export class PanelCloseShortcut {
 	private prefixPressed = false;
@@ -15,7 +16,7 @@ export class PanelCloseShortcut {
 			if (this.prefixPressed) {
 				this.prefixPressed = byte === controlB;
 
-				if (byte === questionMark) {
+				if (byte === lowerQ || byte === upperQ) {
 					return true;
 				}
 

@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vite-plus/test';
 
 import { ConfigurationManager } from '#tmux-keybindings/application/configuration-manager';
+import { KEYBINDING_PROFILE } from '#tmux-keybindings/domain/keybinding-profile';
 import { ConfigPathResolver } from '#tmux-keybindings/infrastructure/config-path-resolver';
 import { KeybindingConfigEditor } from '#tmux-keybindings/infrastructure/keybinding-config-editor';
 import { FakeHerdrClient, FakeStateRepository } from '#tmux-keybindings/testing/support/fakes';
@@ -79,6 +80,66 @@ describe('ConfigurationManager', () => {
 		).toBe(original);
 		expect(state.snapshots.size).toBe(0);
 		expect(client.reloadCalls).toBe(0);
+	});
+
+	it('migrates the legacy help override to the dedicated dialog shortcut', () => {
+		const directory = mkdtempSync(
+			join(
+				tmpdir(),
+				'herdr-tmux-migration-',
+			),
+		);
+
+		const configPath = join(directory, 'config.toml');
+		const original = '[keys]\nprefix = "ctrl+a"\n';
+
+		const legacyApplied = [
+			'[keys]',
+			'prefix = "ctrl+b"',
+			'help = ""',
+			'',
+			'[[keys.command]]',
+			'key = "prefix+?"',
+			'type = "plugin_action"',
+			'command = "oullin.tmux-keybindings.toggle"',
+			'description = "open tmux keybinding dialog"',
+			'',
+		].join('\n');
+
+		writeFileSync(configPath, legacyApplied);
+
+		const { manager, state } = subject();
+
+		state.snapshots.set(configPath, {
+			version: 1,
+			configPath,
+			keysSectionExisted: true,
+			assignments: {
+				...Object.fromEntries(KEYBINDING_PROFILE.map(({ key }) => [key, null])),
+				prefix: 'prefix = "ctrl+a"',
+				help: null,
+			},
+			displacedCommands: [],
+		});
+
+		expect(
+			manager.apply({ HERDR_CONFIG_PATH: configPath }),
+		).toBe('applied');
+
+		const migrated = readFileSync(configPath, 'utf8');
+
+		expect(migrated).not.toContain('help = ""');
+		expect(migrated).not.toContain('key = "prefix+?"');
+		expect(migrated).toContain('key = "prefix+super+q"');
+		expect(state.snapshots.get(configPath)?.version).toBe(2);
+		expect(state.snapshots.get(configPath)?.assignments).not.toHaveProperty('help');
+
+		expect(
+			manager.restore({ HERDR_CONFIG_PATH: configPath }),
+		).toBe('restored');
+		expect(
+			readFileSync(configPath, 'utf8').trimEnd(),
+		).toBe(original.trimEnd());
 	});
 
 	it('does not reapply automatically after a restore', () => {
