@@ -26,7 +26,7 @@ export class PluginApplication {
 						}
 
 						case 'toggle': {
-							return `Tmux keybinding panel: ${this.panelToggle.toggle(environment)}`;
+							return `Tmux keybinding dialog: ${this.panelToggle.toggle(environment)}`;
 						}
 
 						default:

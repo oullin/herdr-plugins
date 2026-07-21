@@ -48,7 +48,7 @@ export const PANEL_GROUPS: readonly BindingGroup[] = [
 		title: 'Global',
 		bindings: [
 			{ chord: 'Ctrl+B', description: 'prefix' },
-			{ chord: '?', description: 'toggle this panel' },
+			{ chord: '?', description: 'open / close dialog' },
 			{ chord: 'd', description: 'detach' },
 			{ chord: 'w', description: 'workspace navigation' },
 		],

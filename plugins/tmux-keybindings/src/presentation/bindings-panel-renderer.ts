@@ -11,19 +11,20 @@ export class BindingsPanelRenderer {
 		const contentWidth = safeWidth - 4;
 		const lines = safeWidth >= 72 ? this.wideLines(contentWidth) : this.narrowLines(contentWidth);
 		const header = this.centre('TMUX KEYBINDINGS', contentWidth);
-		const prefix = this.centre('Ctrl+B, then key', contentWidth);
-		const body = [header, prefix, '', ...lines];
+		const shortcuts = this.shortcutLines(contentWidth);
+		const divider = this.centre('━'.repeat(Math.min(contentWidth, 42)), contentWidth);
+		const body = [header, ...shortcuts, divider, '', ...lines];
 		const visible = body.slice(0, safeHeight - 1);
 
 		if (body.length > visible.length) {
-			visible[visible.length - 1] = this.truncate('… resize pane to see all bindings', contentWidth);
+			visible[visible.length - 1] = this.truncate('… resize dialog to see all bindings', contentWidth);
 		}
 
 		return visible.map((line) => `  ${this.truncate(line, contentWidth)}`).join('\n');
 	}
 
 	private narrowLines(width: number): readonly string[] {
-		return PANEL_GROUPS.flatMap((group, index) => [...(index === 0 ? [] : ['']), group.title.toUpperCase(), ...group.bindings.map((binding) => this.bindingLine(binding, width))]);
+		return PANEL_GROUPS.flatMap((group, index) => [...(index === 0 ? [] : ['']), this.sectionHeading(group.title, width), ...group.bindings.map((binding) => this.bindingLine(binding, width))]);
 	}
 
 	private wideLines(width: number): readonly string[] {
@@ -31,7 +32,7 @@ export class BindingsPanelRenderer {
 		const columns: readonly BindingGroup[][] = [[PANEL_GROUPS[0] as BindingGroup, PANEL_GROUPS[1] as BindingGroup], [PANEL_GROUPS[2] as BindingGroup]];
 
 		const rendered = columns.map((groups) =>
-			groups.flatMap((group, index) => [...(index === 0 ? [] : ['']), group.title.toUpperCase(), ...group.bindings.map((binding) => this.bindingLine(binding, columnWidth))]),
+			groups.flatMap((group, index) => [...(index === 0 ? [] : ['']), this.sectionHeading(group.title, columnWidth), ...group.bindings.map((binding) => this.bindingLine(binding, columnWidth))]),
 		);
 
 		const rowCount = Math.max(...rendered.map((column) => column.length));
@@ -51,6 +52,25 @@ export class BindingsPanelRenderer {
 		const chordWidth = Math.min(maximumChordWidth, Math.max(minimumChordWidth, Math.floor(width * chordWidthRatio)));
 
 		return `${binding.chord.padEnd(chordWidth)} ${binding.description}`;
+	}
+
+	private shortcutLines(width: number): readonly string[] {
+		if (width >= 37) {
+			return [this.centre('Prefix Ctrl+B  •  Close Ctrl+B then ?', width)];
+		}
+
+		if (width >= 20) {
+			return [this.centre('Prefix Ctrl+B', width), this.centre('Close Ctrl+B then ?', width)];
+		}
+
+		return [this.centre('Close Ctrl+B ?', width)];
+	}
+
+	private sectionHeading(title: string, width: number): string {
+		const heading = title.toUpperCase();
+		const rule = '─'.repeat(Math.max(0, width - heading.length - 1));
+
+		return `${heading} ${rule}`;
 	}
 
 	private centre(value: string, width: number): string {

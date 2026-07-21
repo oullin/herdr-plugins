@@ -180,7 +180,7 @@ export class KeybindingConfigEditor {
 	}
 
 	private appendManagedCommand(sourceLines: readonly string[]): string[] {
-		return this.appendBlock(sourceLines, ['[[keys.command]]', 'key = "prefix+?"', 'type = "plugin_action"', `command = "${TOGGLE_ACTION_ID}"`, 'description = "toggle tmux keybinding panel"']);
+		return this.appendBlock(sourceLines, ['[[keys.command]]', 'key = "prefix+?"', 'type = "plugin_action"', `command = "${TOGGLE_ACTION_ID}"`, 'description = "open tmux keybinding dialog"']);
 	}
 
 	private appendBlock(sourceLines: readonly string[], block: readonly string[]): string[] {

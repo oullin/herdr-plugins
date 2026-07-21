@@ -6,7 +6,4 @@ export interface StateRepositoryPort {
 	deleteConfigurationSnapshot(configPath: string): void;
 	isAutomaticApplyDisabled(): boolean;
 	setAutomaticApplyDisabled(disabled: boolean): void;
-	getTrackedPane(workspaceId: string, tabId: string): string | undefined;
-	setTrackedPane(workspaceId: string, tabId: string, paneId: string): void;
-	deleteTrackedPane(workspaceId: string, tabId: string): void;
 }

@@ -1,26 +1,26 @@
 # Tmux Keybindings
 
-Apply a canonical tmux-style keymap to Herdr and keep a resize-aware binding reference beside the active terminal. Press `Ctrl+B ?` to open the panel as a right-side split without moving focus; press the chord again to close it.
+Apply a canonical tmux-style keymap to Herdr and open a compact binding reference as a centered modal dialog. Press `Ctrl+B`, then `?` to open it; repeat the chord inside the dialog or press `Esc` to close it.
 
 The plugin owns only the bindings below. It preserves comments, unrelated settings, and unrelated custom commands in `config.toml`, records the original managed values under `HERDR_PLUGIN_STATE_DIR`, validates every change with `herdr config check`, and rolls back a rejected edit atomically.
 
-| Prefix key | Action                      |
-| ---------- | --------------------------- |
-| `?`        | Toggle the keybinding panel |
-| `d`        | Detach                      |
-| `c`        | New tab                     |
-| `,`        | Rename tab                  |
-| `n` / `p`  | Next / previous tab         |
-| `1..9`     | Switch tab                  |
-| `&`        | Close tab                   |
-| `%` / `"`  | Split right / down          |
-| arrows     | Focus the adjacent pane     |
-| `o`        | Cycle panes                 |
-| `;`        | Focus the last pane         |
-| `x`        | Close pane                  |
-| `z`        | Zoom pane                   |
-| `[`        | Copy mode                   |
-| `w`        | Workspace navigation        |
+| Prefix key | Action                        |
+| ---------- | ----------------------------- |
+| `?`        | Open/close the binding dialog |
+| `d`        | Detach                        |
+| `c`        | New tab                       |
+| `,`        | Rename tab                    |
+| `n` / `p`  | Next / previous tab           |
+| `1..9`     | Switch tab                    |
+| `&`        | Close tab                     |
+| `%` / `"`  | Split right / down            |
+| arrows     | Focus the adjacent pane       |
+| `o`        | Cycle panes                   |
+| `;`        | Focus the last pane           |
+| `x`        | Close pane                    |
+| `z`        | Zoom pane                     |
+| `[`        | Copy mode                     |
+| `w`        | Workspace navigation          |
 
 ## Install and apply
 
@@ -31,7 +31,7 @@ herdr plugin action invoke oullin.tmux-keybindings.apply
 
 The apply action follows `HERDR_CONFIG_PATH` when it is set. Otherwise it uses `%APPDATA%\herdr\config.toml` on Windows and `~/.config/herdr/config.toml` (or `$XDG_CONFIG_HOME/herdr/config.toml`) on Linux and macOS. A workspace-start hook idempotently reapplies the profile after installation; restoring the original bindings disables that automatic apply until the manual apply action is invoked again.
 
-## Toggle the panel
+## Open the dialog
 
 Use `Ctrl+B ?`, or invoke the action directly:
 
@@ -39,7 +39,7 @@ Use `Ctrl+B ?`, or invoke the action directly:
 herdr plugin action invoke oullin.tmux-keybindings.toggle
 ```
 
-Pane identity is tracked independently for each workspace and tab. If the panel was closed manually, the next toggle discards the stale record and opens a fresh panel. Herdr's normal session layout persistence keeps an open panel in the tab layout across detach and reattach.
+The popup is session-modal and leaves the tiled tab layout unchanged. Its header repeats both closing shortcuts so the exit path is always visible.
 
 ## Restore and uninstall
 

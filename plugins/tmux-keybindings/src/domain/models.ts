@@ -1,4 +1,4 @@
-export type { Environment, Pane } from '@oullin/herdr-plugin-core';
+export type { Environment } from '@oullin/herdr-plugin-core';
 
 export interface ConfigurationSnapshot {
 	readonly version: 1;

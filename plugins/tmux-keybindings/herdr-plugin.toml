@@ -1,8 +1,8 @@
 id = "oullin.tmux-keybindings"
 name = "Tmux Keybindings"
-version = "0.1.1"
-min_herdr_version = "0.7.0"
-description = "Apply a canonical tmux keymap and toggle a persistent binding panel"
+version = "0.2.0"
+min_herdr_version = "0.7.4"
+description = "Apply a canonical tmux keymap and open a modal binding reference"
 platforms = ["linux", "macos", "windows"]
 
 [[build]]
@@ -26,8 +26,8 @@ command = ["node", "index.ts", "apply"]
 
 [[actions]]
 id = "toggle"
-title = "Toggle tmux keybinding panel"
-description = "Open or close the keybinding panel for the active tab"
+title = "Open tmux keybinding dialog"
+description = "Open the modal keybinding reference for the active pane"
 contexts = ["global"]
 command = ["node", "index.ts", "toggle"]
 
@@ -45,5 +45,7 @@ command = ["node", "index.ts", "apply", "--automatic"]
 [[panes]]
 id = "bindings"
 title = "Tmux keybindings"
-placement = "split"
+placement = "popup"
+width = 84
+height = 24
 command = ["node", "index.ts", "bindings"]
