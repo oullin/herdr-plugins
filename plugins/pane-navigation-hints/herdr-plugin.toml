@@ -1,0 +1,36 @@
+id = "oullin.pane-navigation-hints"
+name = "Pane Navigation Hints"
+version = "0.1.0"
+min_herdr_version = "0.7.4"
+description = "Show live pane navigation shortcuts in every pane border"
+platforms = ["linux", "macos", "windows"]
+
+[[build]]
+command = [
+  "npm",
+  "install",
+  "--omit=dev",
+  "--ignore-scripts",
+  "--no-audit",
+  "--no-fund",
+  "--no-package-lock",
+  "--workspaces=false",
+]
+
+[[actions]]
+id = "refresh"
+title = "Refresh pane navigation hints"
+description = "Show the current pane navigation shortcuts in every pane border"
+contexts = ["global"]
+command = ["node", "index.ts", "refresh"]
+
+[[actions]]
+id = "clear"
+title = "Clear pane navigation hints"
+description = "Restore the normal title in every pane border"
+contexts = ["global"]
+command = ["node", "index.ts", "clear"]
+
+[[events]]
+on = "pane.created"
+command = ["node", "index.ts", "pane-created"]
