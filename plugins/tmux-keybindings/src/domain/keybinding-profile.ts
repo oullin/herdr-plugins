@@ -19,7 +19,9 @@ export const PLUGIN_ID = 'oullin.tmux-keybindings';
 
 export const PANE_ENTRYPOINT = 'bindings';
 
-export const DIALOG_SHORTCUT = 'prefix+super+q';
+export const DIALOG_SHORTCUT = 'prefix+ctrl+alt+shift+super+q';
+
+export const SUPER_DIALOG_SHORTCUT = 'prefix+super+q';
 
 export const LEGACY_DIALOG_SHORTCUT = 'prefix+?';
 
@@ -51,7 +53,7 @@ export const PANEL_GROUPS: readonly BindingGroup[] = [
 		title: 'Global',
 		bindings: [
 			{ chord: 'Ctrl+B', description: 'prefix' },
-			{ chord: 'Super+Q', description: 'open / close dialog' },
+			{ chord: 'CapsLock+Q', description: 'open / close dialog' },
 			{ chord: 'd', description: 'detach' },
 			{ chord: 'w', description: 'workspace navigation' },
 		],

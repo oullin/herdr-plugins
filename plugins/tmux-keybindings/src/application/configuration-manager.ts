@@ -30,12 +30,13 @@ export class ConfigurationManager {
 		const originalExists = this.files.exists(configPath);
 		const original = this.files.read(configPath) ?? '';
 		const savedSnapshot = this.state.loadConfigurationSnapshot(configPath);
-		const baseline = savedSnapshot?.version === 1 ? this.editor.restore(original, savedSnapshot) : original;
+		const requiresMigration = savedSnapshot !== undefined && savedSnapshot.version < 3;
+		const baseline = requiresMigration ? this.editor.restore(original, savedSnapshot) : original;
 		const edit = this.editor.apply(baseline, configPath);
 
 		this.writeAndValidate(configPath, original, originalExists, edit.content);
 
-		if (!savedSnapshot || savedSnapshot.version === 1) {
+		if (!savedSnapshot || requiresMigration) {
 			this.state.saveConfigurationSnapshot(edit.snapshot);
 		}
 

@@ -8,7 +8,7 @@ describe('BindingsPanelRenderer', () => {
 	it('renders every group in a narrow pane', () => {
 		const panel = renderer.render(42, 30);
 
-		expect(panel).toContain('Ctrl+B then Super+Q');
+		expect(panel).toContain('Ctrl+B then CapsLock+Q');
 		expect(panel).toContain('Esc closes');
 		expect(panel).toContain('GLOBAL');
 		expect(panel).toContain('TABS');

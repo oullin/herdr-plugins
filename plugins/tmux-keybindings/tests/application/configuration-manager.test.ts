@@ -130,9 +130,69 @@ describe('ConfigurationManager', () => {
 
 		expect(migrated).not.toContain('help = ""');
 		expect(migrated).not.toContain('key = "prefix+?"');
-		expect(migrated).toContain('key = "prefix+super+q"');
-		expect(state.snapshots.get(configPath)?.version).toBe(2);
+		expect(migrated).toContain('key = "prefix+ctrl+alt+shift+super+q"');
+		expect(state.snapshots.get(configPath)?.version).toBe(3);
 		expect(state.snapshots.get(configPath)?.assignments).not.toHaveProperty('help');
+
+		expect(
+			manager.restore({ HERDR_CONFIG_PATH: configPath }),
+		).toBe('restored');
+		expect(
+			readFileSync(configPath, 'utf8').trimEnd(),
+		).toBe(original.trimEnd());
+	});
+
+	it('migrates the super-only shortcut without losing the displaced command', () => {
+		const directory = mkdtempSync(
+			join(
+				tmpdir(),
+				'herdr-tmux-super-migration-',
+			),
+		);
+
+		const configPath = join(directory, 'config.toml');
+		const displacedCommand = ['[[keys.command]]', 'key = "prefix+super+q"', 'type = "shell"', 'command = "old-super"', ''].join('\n');
+		const original = ['[keys]', 'prefix = "ctrl+a"', '', displacedCommand].join('\n');
+
+		const superApplied = [
+			'[keys]',
+			'prefix = "ctrl+b"',
+			'',
+			'[[keys.command]]',
+			'key = "prefix+super+q"',
+			'type = "plugin_action"',
+			'command = "oullin.tmux-keybindings.toggle"',
+			'description = "open tmux keybinding dialog"',
+			'',
+		].join('\n');
+
+		writeFileSync(configPath, superApplied);
+
+		const { manager, state } = subject();
+
+		state.snapshots.set(configPath, {
+			version: 2,
+			configPath,
+			keysSectionExisted: true,
+			assignments: {
+				...Object.fromEntries(KEYBINDING_PROFILE.map(({ key }) => [key, null])),
+				prefix: 'prefix = "ctrl+a"',
+			},
+			displacedCommands: [{ line: 3, text: displacedCommand }],
+		});
+
+		expect(
+			manager.apply({ HERDR_CONFIG_PATH: configPath }),
+		).toBe('applied');
+
+		const migrated = readFileSync(configPath, 'utf8');
+
+		expect(migrated).toContain('command = "old-super"');
+		expect(migrated).toContain('key = "prefix+ctrl+alt+shift+super+q"');
+		expect(
+			migrated.match(/oullin\.tmux-keybindings\.toggle/gu),
+		).toHaveLength(1);
+		expect(state.snapshots.get(configPath)?.version).toBe(3);
 
 		expect(
 			manager.restore({ HERDR_CONFIG_PATH: configPath }),

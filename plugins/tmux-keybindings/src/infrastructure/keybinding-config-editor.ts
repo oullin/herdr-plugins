@@ -1,4 +1,4 @@
-import { DIALOG_SHORTCUT, KEYBINDING_PROFILE, LEGACY_DIALOG_SHORTCUT, TOGGLE_ACTION_ID } from '#tmux-keybindings/domain/keybinding-profile';
+import { DIALOG_SHORTCUT, KEYBINDING_PROFILE, LEGACY_DIALOG_SHORTCUT, SUPER_DIALOG_SHORTCUT, TOGGLE_ACTION_ID } from '#tmux-keybindings/domain/keybinding-profile';
 import type { ConfigurationEdit, ConfigurationSnapshot } from '#tmux-keybindings/domain/models';
 
 interface CommandBlock {
@@ -36,7 +36,7 @@ export class KeybindingConfigEditor {
 		return {
 			content: lines.join('\n'),
 			snapshot: {
-				version: 2,
+				version: 3,
 				configPath,
 				keysSectionExisted: keysSection !== undefined,
 				assignments,
@@ -52,7 +52,7 @@ export class KeybindingConfigEditor {
 
 		lines = this.removeCommandBlocks(
 			lines,
-			commandBlocks.filter((block) => block.key === (snapshot.version === 1 ? LEGACY_DIALOG_SHORTCUT : DIALOG_SHORTCUT) || block.command === TOGGLE_ACTION_ID),
+			commandBlocks.filter((block) => block.key === this.snapshotDialogShortcut(snapshot) || block.command === TOGGLE_ACTION_ID),
 		);
 		lines = this.restoreAssignments(lines, snapshot);
 
@@ -69,6 +69,14 @@ export class KeybindingConfigEditor {
 		}
 
 		return lines.join('\n');
+	}
+
+	private snapshotDialogShortcut(snapshot: ConfigurationSnapshot): string {
+		if (snapshot.version === 1) {
+			return LEGACY_DIALOG_SHORTCUT;
+		}
+
+		return snapshot.version === 2 ? SUPER_DIALOG_SHORTCUT : DIALOG_SHORTCUT;
 	}
 
 	private applyAssignments(sourceLines: readonly string[]): string[] {
