@@ -9,7 +9,7 @@ describe('NavigationHintFormatter', () => {
 	it('formats the Herdr defaults and omits the unbound last-pane action', () => {
 		expect(
 			formatter.format(DEFAULT_PANE_NAVIGATION_BINDINGS),
-		).toBe('←↓↑→ Ctrl+B+h/j/k/l · N/P Ctrl+B+Tab/Shift+Tab');
+		).toBe('Ctrl+B then: Focus ←/↓/↑/→ h/j/k/l · Cycle next/prev Tab/Shift+Tab');
 	});
 
 	it('collapses the tmux profile into one compact legend', () => {
@@ -24,7 +24,7 @@ describe('NavigationHintFormatter', () => {
 					cyclePanePrevious: 'prefix+shift+tab',
 					lastPane: 'prefix+;',
 				}),
-		).toBe('←↓↑→ Ctrl+B+←/↓/↑/→ · N/P Ctrl+B+o/Shift+Tab · Last Ctrl+B+;');
+		).toBe('Ctrl+B then: Focus ←/↓/↑/→ · Cycle next/prev o/Shift+Tab · Last ;');
 	});
 
 	it('renders partial and direct bindings without inventing missing actions', () => {
@@ -36,7 +36,7 @@ describe('NavigationHintFormatter', () => {
 					cyclePaneNext: 'alt+n',
 					cyclePanePrevious: '',
 				}),
-		).toBe('← Ctrl+B+h → Ctrl+B+l · N Alt+n');
+		).toBe('Focus ← Ctrl+B+h → Ctrl+B+l · Next Alt+n');
 	});
 
 	it('omits separators before collapsed bindings when the prefix is empty', () => {
@@ -51,7 +51,7 @@ describe('NavigationHintFormatter', () => {
 					cyclePanePrevious: 'prefix+shift+tab',
 					lastPane: 'prefix+;',
 				}),
-		).toBe('←↓↑→ ←/↓/↑/→ · N/P o/Shift+Tab · Last ;');
+		).toBe('Focus ←/↓/↑/→ · Cycle next/prev o/Shift+Tab · Last ;');
 	});
 
 	it('omits separators before individual bindings when the prefix is empty', () => {
@@ -66,7 +66,7 @@ describe('NavigationHintFormatter', () => {
 					cyclePanePrevious: '',
 					lastPane: '',
 				}),
-		).toBe('← ← · N Tab');
+		).toBe('Focus ← ← · Next Tab');
 	});
 
 	it('reports when every pane navigation action is unbound', () => {

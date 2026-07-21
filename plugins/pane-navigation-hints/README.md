@@ -5,8 +5,10 @@ Show the effective pane navigation shortcuts in every Herdr pane border. The plu
 For the tmux-style profile, the border resembles:
 
 ```text
-←↓↑→ Ctrl+B+←/↓/↑/→ · N/P Ctrl+B+o/Shift+Tab · Last Ctrl+B+;
+Ctrl+B then: Focus ←/↓/↑/→ · Cycle next/prev o/Shift+Tab · Last ;
 ```
+
+Read the shared prefix first: press `Ctrl+B`, release it, then press the arrow pointing toward the adjacent pane you want to focus. The remaining labels use the same prefix for cycling or returning to the last pane.
 
 The plugin is display-only. It does not change keybindings and does not depend on the Tmux Keybindings plugin.
 

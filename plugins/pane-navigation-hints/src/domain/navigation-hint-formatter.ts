@@ -21,11 +21,17 @@ const keyLabels: Readonly<Record<string, string>> = {
 
 export class NavigationHintFormatter {
 	format(bindings: PaneNavigationBindings): string {
-		const segments = [this.focusSegment(bindings), this.cycleSegment(bindings), bindings.lastPane === '' ? undefined : `Last ${this.renderBinding(bindings.lastPane, bindings.prefix)}`].filter(
-			(segment): segment is string => segment !== undefined,
-		);
+		const usesSharedPrefix = this.usesSharedPrefix(bindings);
+		const displayBindings = usesSharedPrefix ? this.withoutBindingPrefixes(bindings) : bindings;
 
-		const title = segments.length === 0 ? 'Pane navigation is unbound' : segments.join(separator);
+		const segments = [
+			this.focusSegment(displayBindings),
+			this.cycleSegment(displayBindings),
+			displayBindings.lastPane === '' ? undefined : `Last ${this.renderBinding(displayBindings.lastPane, displayBindings.prefix)}`,
+		].filter((segment): segment is string => segment !== undefined);
+
+		const legend = segments.join(separator);
+		const title = segments.length === 0 ? 'Pane navigation is unbound' : usesSharedPrefix ? `${this.renderPrefix(bindings.prefix)} then: ${legend}` : legend;
 
 		return this.truncate(title);
 	}
@@ -43,17 +49,17 @@ export class NavigationHintFormatter {
 		}
 
 		if (directional.length === 4) {
-			const collapsed = this.collapseBindings(
+			const directions = directional.map(({ direction }) => direction).join('/');
+
+			const collapsed = this.renderBindingList(
 				directional.map(({ binding }) => binding),
 				bindings.prefix,
 			);
 
-			if (collapsed !== undefined) {
-				return `←↓↑→ ${collapsed}`;
-			}
+			return collapsed === directions ? `Focus ${directions}` : `Focus ${directions} ${collapsed}`;
 		}
 
-		return directional.map(({ direction, binding }) => `${direction} ${this.renderBinding(binding, bindings.prefix)}`).join(' ');
+		return `Focus ${directional.map(({ direction, binding }) => `${direction} ${this.renderBinding(binding, bindings.prefix)}`).join(' ')}`;
 	}
 
 	private cycleSegment(bindings: PaneNavigationBindings): string | undefined {
@@ -64,19 +70,42 @@ export class NavigationHintFormatter {
 		}
 
 		if (cycleBindings.length === 2) {
-			const collapsed = this.collapseBindings(cycleBindings, bindings.prefix);
-
-			if (collapsed !== undefined) {
-				return `N/P ${collapsed}`;
-			}
+			return `Cycle next/prev ${this.renderBindingList(cycleBindings, bindings.prefix)}`;
 		}
 
 		const labels = [
-			bindings.cyclePaneNext === '' ? undefined : `N ${this.renderBinding(bindings.cyclePaneNext, bindings.prefix)}`,
-			bindings.cyclePanePrevious === '' ? undefined : `P ${this.renderBinding(bindings.cyclePanePrevious, bindings.prefix)}`,
+			bindings.cyclePaneNext === '' ? undefined : `Next ${this.renderBinding(bindings.cyclePaneNext, bindings.prefix)}`,
+			bindings.cyclePanePrevious === '' ? undefined : `Prev ${this.renderBinding(bindings.cyclePanePrevious, bindings.prefix)}`,
 		].filter((label): label is string => label !== undefined);
 
 		return labels.join(' ');
+	}
+
+	private renderBindingList(bindings: readonly string[], prefix: string): string {
+		return this.collapseBindings(bindings, prefix) ?? bindings.map((binding) => this.renderBinding(binding, prefix)).join('/');
+	}
+
+	private usesSharedPrefix(bindings: PaneNavigationBindings): boolean {
+		const actions = [bindings.focusPaneLeft, bindings.focusPaneDown, bindings.focusPaneUp, bindings.focusPaneRight, bindings.cyclePaneNext, bindings.cyclePanePrevious, bindings.lastPane].filter(
+			(binding) => binding !== '',
+		);
+
+		return bindings.prefix !== '' && actions.length > 0 && actions.every((binding) => binding.startsWith('prefix+') && binding.length > 'prefix+'.length);
+	}
+
+	private withoutBindingPrefixes(bindings: PaneNavigationBindings): PaneNavigationBindings {
+		const withoutPrefix = (binding: string): string => (binding === '' ? '' : binding.slice('prefix+'.length));
+
+		return {
+			prefix: '',
+			focusPaneLeft: withoutPrefix(bindings.focusPaneLeft),
+			focusPaneDown: withoutPrefix(bindings.focusPaneDown),
+			focusPaneUp: withoutPrefix(bindings.focusPaneUp),
+			focusPaneRight: withoutPrefix(bindings.focusPaneRight),
+			cyclePaneNext: withoutPrefix(bindings.cyclePaneNext),
+			cyclePanePrevious: withoutPrefix(bindings.cyclePanePrevious),
+			lastPane: withoutPrefix(bindings.lastPane),
+		};
 	}
 
 	private collapseBindings(bindings: readonly string[], prefix: string): string | undefined {
