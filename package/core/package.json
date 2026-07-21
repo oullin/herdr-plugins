@@ -1,13 +1,13 @@
 {
   "name": "@oullin/herdr-plugin-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Repository-local runtime primitives for Herdr plugins.",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/oullin/herdr-plugins.git",
-    "directory": "packages/plugin-core"
+    "directory": "package/core"
   },
   "type": "module",
   "imports": {

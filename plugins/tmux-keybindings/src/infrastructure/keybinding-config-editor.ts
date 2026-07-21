@@ -12,6 +12,7 @@ interface CommandBlock {
 const tableHeaderPattern = /^\s*\[.+\]\s*(?:#.*)?$/u;
 const keysHeaderPattern = /^\s*\[keys\]\s*(?:#.*)?$/u;
 const commandHeaderPattern = /^\s*\[\[keys\.command\]\]\s*(?:#.*)?$/u;
+const toggleChord = 'prefix+/';
 
 export class KeybindingConfigEditor {
 	apply(source: string, configPath: string): ConfigurationEdit {
@@ -24,9 +25,9 @@ export class KeybindingConfigEditor {
 		}
 
 		const commandBlocks = this.commandBlocks(sourceLines);
+		const managedCommandBlocks = commandBlocks.filter((block) => block.key === toggleChord || block.command === TOGGLE_ACTION_ID);
 
-		const managedCommandBlocks = commandBlocks.filter((block) => block.key === 'prefix+?' || block.command === TOGGLE_ACTION_ID);
-		const displacedCommands = managedCommandBlocks.map((block) => ({ line: block.start, text: block.text }));
+		const displacedCommands = managedCommandBlocks.filter((block) => block.key === toggleChord && block.command !== TOGGLE_ACTION_ID).map((block) => ({ line: block.start, text: block.text }));
 
 		let lines = this.removeCommandBlocks(sourceLines, managedCommandBlocks);
 
@@ -36,12 +37,26 @@ export class KeybindingConfigEditor {
 		return {
 			content: lines.join('\n'),
 			snapshot: {
-				version: 1,
+				version: 2,
 				configPath,
 				keysSectionExisted: keysSection !== undefined,
 				assignments,
 				displacedCommands,
 			},
+		};
+	}
+
+	mergeSnapshots(saved: ConfigurationSnapshot | undefined, discovered: ConfigurationSnapshot): ConfigurationSnapshot {
+		if (!saved) {
+			return discovered;
+		}
+
+		return {
+			version: 2,
+			configPath: saved.configPath,
+			keysSectionExisted: saved.keysSectionExisted,
+			assignments: saved.assignments,
+			displacedCommands: [...saved.displacedCommands.filter((command) => !this.isPluginCommand(command.text)), ...discovered.displacedCommands],
 		};
 	}
 
@@ -52,7 +67,7 @@ export class KeybindingConfigEditor {
 
 		lines = this.removeCommandBlocks(
 			lines,
-			commandBlocks.filter((block) => block.key === 'prefix+?' || block.command === TOGGLE_ACTION_ID),
+			commandBlocks.filter((block) => block.command === TOGGLE_ACTION_ID),
 		);
 		lines = this.restoreAssignments(lines, snapshot);
 
@@ -60,7 +75,7 @@ export class KeybindingConfigEditor {
 			lines = this.removeEmptyKeysSection(lines);
 		}
 
-		for (const command of [...snapshot.displacedCommands].sort((left, right) => left.line - right.line)) {
+		for (const command of snapshot.displacedCommands.filter((candidate) => !this.isPluginCommand(candidate.text)).sort((left, right) => right.line - left.line)) {
 			const insertion = Math.min(command.line, lines.length);
 			const commandLines = command.text.split('\n');
 			const replaceSeparator = commandLines.at(-1) === '' && lines[insertion]?.trim() === '' ? 1 : 0;
@@ -180,7 +195,17 @@ export class KeybindingConfigEditor {
 	}
 
 	private appendManagedCommand(sourceLines: readonly string[]): string[] {
-		return this.appendBlock(sourceLines, ['[[keys.command]]', 'key = "prefix+?"', 'type = "plugin_action"', `command = "${TOGGLE_ACTION_ID}"`, 'description = "toggle tmux keybinding panel"']);
+		return this.appendBlock(sourceLines, [
+			'[[keys.command]]',
+			`key = "${toggleChord}"`,
+			'type = "plugin_action"',
+			`command = "${TOGGLE_ACTION_ID}"`,
+			'description = "toggle tmux keybinding panel"',
+		]);
+	}
+
+	private isPluginCommand(text: string): boolean {
+		return this.stringValue(text.split('\n'), 'command') === TOGGLE_ACTION_ID;
 	}
 
 	private appendBlock(sourceLines: readonly string[], block: readonly string[]): string[] {

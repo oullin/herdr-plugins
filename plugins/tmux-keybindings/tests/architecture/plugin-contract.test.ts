@@ -17,7 +17,7 @@ describe('tmux-keybindings plugin contract', () => {
 		);
 
 		expect(manifest).toContain('id = "oullin.tmux-keybindings"');
-		expect(manifest).toContain('version = "0.1.1"');
+		expect(manifest).toContain('version = "0.1.2"');
 		expect(manifest).toContain('min_herdr_version = "0.7.0"');
 		expect(manifest).toContain('[[build]]');
 		expect(manifest).toContain('"npm"');
@@ -54,6 +54,20 @@ describe('tmux-keybindings plugin contract', () => {
 			'#tmux-keybindings/testing/*',
 		]);
 		expect(catalogue).toContain('[Tmux Keybindings](plugins/tmux-keybindings)');
-		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../packages/plugin-core' });
+		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../package/core' });
+	});
+
+	it('keeps package and manifest versions aligned', () => {
+		const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
+			readonly version?: string;
+		};
+
+		const manifest = readFileSync(
+			join(root, 'herdr-plugin.toml'),
+			'utf8',
+		);
+
+		expect(packageJson.version).toBe('0.1.2');
+		expect(manifest).toContain(`version = "${packageJson.version}"`);
 	});
 });

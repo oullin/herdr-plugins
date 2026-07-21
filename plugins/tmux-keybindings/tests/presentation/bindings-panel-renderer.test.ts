@@ -12,6 +12,9 @@ describe('BindingsPanelRenderer', () => {
 		expect(panel).toContain('TABS');
 		expect(panel).toContain('PANES');
 		expect(panel).toContain('% / "');
+		expect(panel).toContain('Ctrl+B /');
+		expect(panel).toContain('open / close this panel');
+		expect(panel).toMatch(/\?\s+keybinds/u);
 		expect(
 			panel.split('\n').every((line) => line.length <= 42),
 		).toBe(true);

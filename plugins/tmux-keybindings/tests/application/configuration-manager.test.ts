@@ -41,6 +41,12 @@ describe('ConfigurationManager', () => {
 		expect(
 			manager.apply(environment),
 		).toBe('applied');
+
+		const applied = readFileSync(configPath, 'utf8');
+
+		expect(applied).toContain('help = "prefix+?"');
+		expect(applied).toContain('key = "prefix+/"');
+		expect(state.snapshots.get(configPath)?.version).toBe(2);
 		expect(
 			manager.apply(environment),
 		).toBe('unchanged');
@@ -54,6 +60,60 @@ describe('ConfigurationManager', () => {
 			readFileSync(configPath, 'utf8'),
 		).toBe(original);
 		expect(state.automaticApplyDisabled).toBe(true);
+	});
+
+	it('migrates legacy state and preserves a newly displaced slash command', () => {
+		const directory = mkdtempSync(
+			join(
+				tmpdir(),
+				'herdr-tmux-migration-',
+			),
+		);
+
+		const configPath = join(directory, 'config.toml');
+		const originalAssignments = '[keys]\nprefix = "ctrl+a"\nhelp = "ctrl+h"\n';
+		const legacyHelp = ['[[keys.command]]', 'key = "prefix+?"', 'type = "shell"', 'command = "old-help"', ''].join('\n');
+		const slashCommand = ['[[keys.command]]', 'key = "prefix+/"', 'type = "shell"', 'command = "slash-help"', ''].join('\n');
+		const editor = new KeybindingConfigEditor();
+		const originalSnapshot = editor.apply(`${originalAssignments}\n${legacyHelp}`, configPath).snapshot;
+		const legacyApplied = editor.apply(originalAssignments, configPath).content.replace('help = "prefix+?"', 'help = ""').replace('key = "prefix+/"', 'key = "prefix+?"');
+
+		writeFileSync(configPath, `${legacyApplied}\n${slashCommand}`);
+
+		const { manager, state } = subject();
+
+		state.snapshots.set(configPath, {
+			...originalSnapshot,
+			version: 1,
+			displacedCommands: [{ line: 4, text: legacyHelp }],
+		});
+
+		expect(
+			manager.apply({ HERDR_CONFIG_PATH: configPath }),
+		).toBe('applied');
+
+		const migrated = state.snapshots.get(configPath);
+
+		expect(migrated?.version).toBe(2);
+		expect(migrated?.assignments).toEqual(originalSnapshot.assignments);
+		expect(
+			migrated?.displacedCommands.map((command) => command.text),
+		).toEqual([legacyHelp, slashCommand]);
+		expect(
+			readFileSync(configPath, 'utf8'),
+		).not.toContain('command = "slash-help"');
+
+		expect(
+			manager.restore({ HERDR_CONFIG_PATH: configPath }),
+		).toBe('restored');
+
+		const restored = readFileSync(configPath, 'utf8');
+
+		expect(restored).toContain('prefix = "ctrl+a"');
+		expect(restored).toContain('help = "ctrl+h"');
+		expect(restored).toContain('command = "old-help"');
+		expect(restored).toContain('command = "slash-help"');
+		expect(restored).not.toContain('oullin.tmux-keybindings.toggle');
 	});
 
 	it('rolls back atomically when Herdr rejects the candidate', () => {

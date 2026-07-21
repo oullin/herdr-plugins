@@ -7,7 +7,7 @@ is installed from the managed repository checkout and is not published to npm.
 ## Usage
 
 Plugins declare `@oullin/herdr-plugin-core` as a direct
-`file:../../packages/plugin-core` dependency. Their Herdr build command installs
+`file:../../package/core` dependency. Their Herdr build command installs
 the local package into the plugin's `node_modules` directory.
 
 The package exposes TypeScript source for Node.js 24. It provides Herdr CLI

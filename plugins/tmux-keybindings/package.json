@@ -1,6 +1,6 @@
 {
   "name": "@oullin/herdr-tmux-keybindings",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Apply a canonical tmux keymap and toggle a persistent Herdr binding panel.",
   "license": "MIT",
   "repository": {
@@ -26,7 +26,7 @@
   },
   "exports": "./index.ts",
   "dependencies": {
-    "@oullin/herdr-plugin-core": "file:../../packages/plugin-core"
+    "@oullin/herdr-plugin-core": "file:../../package/core"
   },
   "engines": {
     "node": ">=24.12.0 <25"
