@@ -63,6 +63,26 @@ describe('module aliases', () => {
 			readonly dependencies?: Record<string, string>;
 		};
 
-		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../packages/plugin-core' });
+		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../package/core' });
+	});
+
+	it('keeps package and manifest versions aligned', () => {
+		const root = join(
+			process.cwd(),
+			'plugins',
+			'tab-numbers',
+		);
+
+		const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
+			readonly version?: string;
+		};
+
+		const manifest = readFileSync(
+			join(root, 'herdr-plugin.toml'),
+			'utf8',
+		);
+
+		expect(packageJson.version).toBe('0.1.7');
+		expect(manifest).toContain(`version = "${packageJson.version}"`);
 	});
 });

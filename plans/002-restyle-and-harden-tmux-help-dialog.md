@@ -75,15 +75,15 @@ documented close behavior precise.
 
 Use this exact palette:
 
-| Role | Colour |
-| --- | --- |
-| Background | `#1a1b26` |
-| Primary text | `#c0caf5` |
-| Muted text | `#737aa2` |
-| Section heading | `#7dcfff` |
-| Shortcut | `#bb9af7` |
+| Role                   | Colour    |
+| ---------------------- | --------- |
+| Background             | `#1a1b26` |
+| Primary text           | `#c0caf5` |
+| Muted text             | `#737aa2` |
+| Section heading        | `#7dcfff` |
+| Shortcut               | `#bb9af7` |
 | Close badge background | `#7aa2f7` |
-| Close badge text | `#1a1b26` |
+| Close badge text       | `#1a1b26` |
 
 At `84x30`, render this hierarchy without overflow:
 
@@ -128,15 +128,15 @@ message. Do not claim scrolling support.
 
 ## Commands you will need
 
-| Purpose | Command | Expected on success |
-| --- | --- | --- |
-| Install in fresh worktree | `vp install --frozen-lockfile` | exit 0 |
-| Focused tests | `vp test plugins/tmux-keybindings/tests/presentation/bindings-panel-renderer.test.ts plugins/tmux-keybindings/tests/presentation/panel-close-shortcut.test.ts plugins/tmux-keybindings/tests/architecture/plugin-contract.test.ts` | all focused tests pass |
-| Render smoke | `node --experimental-strip-types --input-type=module -e "import { BindingsPanelRenderer } from './plugins/tmux-keybindings/index.ts'; process.stdout.write(new BindingsPanelRenderer().render(84, 30))"` | styled 84x30 dialog output |
-| Format | `make format-all` | exit 0, no formatter or lint errors |
-| Full verification | `vp run ready` | check and complete test suite pass |
-| Dependency audit | `pnpm audit --audit-level high` | no high or critical vulnerability |
-| Diff hygiene | `git diff --check` | no output, exit 0 |
+| Purpose                   | Command                                                                                                                                                                                                                            | Expected on success                 |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Install in fresh worktree | `vp install --frozen-lockfile`                                                                                                                                                                                                     | exit 0                              |
+| Focused tests             | `vp test plugins/tmux-keybindings/tests/presentation/bindings-panel-renderer.test.ts plugins/tmux-keybindings/tests/presentation/panel-close-shortcut.test.ts plugins/tmux-keybindings/tests/architecture/plugin-contract.test.ts` | all focused tests pass              |
+| Render smoke              | `node --experimental-strip-types --input-type=module -e "import { BindingsPanelRenderer } from './plugins/tmux-keybindings/index.ts'; process.stdout.write(new BindingsPanelRenderer().render(84, 30))"`                           | styled 84x30 dialog output          |
+| Format                    | `make format-all`                                                                                                                                                                                                                  | exit 0, no formatter or lint errors |
+| Full verification         | `vp run ready`                                                                                                                                                                                                                     | check and complete test suite pass  |
+| Dependency audit          | `pnpm audit --audit-level high`                                                                                                                                                                                                    | no high or critical vulnerability   |
+| Diff hygiene              | `git diff --check`                                                                                                                                                                                                                 | no output, exit 0                   |
 
 ## Scope
 
@@ -274,9 +274,9 @@ and every command remains sourced from `PANEL_GROUPS`.
 - [ ] Arrow keys and unrelated Alt sequences do not close the dialog.
 - [ ] Popup height is 30; all other manifest behavior is unchanged.
 - [ ] New rendering data uses immutable class DTOs/value objects, one exported
-  class per file.
+      class per file.
 - [ ] No new interface, adapter, free helper function, `typeof`, `instanceof`,
-  reflection, or `Record` usage is introduced.
+      reflection, or `Record` usage is introduced.
 - [ ] Focused tests, render smoke, and `vp run ready` pass.
 - [ ] `pnpm audit --audit-level high` and `git diff --check` pass.
 - [ ] Only the ten in-scope files are changed.

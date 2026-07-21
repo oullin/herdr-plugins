@@ -83,14 +83,14 @@ remain observable.
 
 ## Commands you will need
 
-| Purpose | Command | Expected on success |
-| --- | --- | --- |
-| Install in fresh worktree | `vp install --frozen-lockfile` | exit 0 |
-| Focused tests | `vp test packages/plugin-core/tests/herdr-cli-client.test.ts` | all focused tests pass |
-| Format | `make format-all` | exit 0, no formatter or lint errors |
-| Full verification | `vp run ready` | check and complete test suite pass |
-| Dependency audit | `pnpm audit --audit-level high` | no high or critical vulnerability |
-| Diff hygiene | `git diff --check` | no output, exit 0 |
+| Purpose                   | Command                                                       | Expected on success                 |
+| ------------------------- | ------------------------------------------------------------- | ----------------------------------- |
+| Install in fresh worktree | `vp install --frozen-lockfile`                                | exit 0                              |
+| Focused tests             | `vp test packages/plugin-core/tests/herdr-cli-client.test.ts` | all focused tests pass              |
+| Format                    | `make format-all`                                             | exit 0, no formatter or lint errors |
+| Full verification         | `vp run ready`                                                | check and complete test suite pass  |
+| Dependency audit          | `pnpm audit --audit-level high`                               | no high or critical vulnerability   |
+| Diff hygiene              | `git diff --check`                                            | no output, exit 0                   |
 
 ## Scope
 
@@ -180,7 +180,7 @@ only the two in-scope files changed.
 - [ ] Process errors and malformed success payloads are observable failures.
 - [ ] The public `Pane | undefined` signature and exports are unchanged.
 - [ ] No new interface, adapter, DTO, `typeof`, `instanceof`, reflection, or
-  `Record` usage is introduced.
+      `Record` usage is introduced.
 - [ ] Focused tests and `vp run ready` pass.
 - [ ] `pnpm audit --audit-level high` and `git diff --check` pass.
 - [ ] Only the two in-scope files are changed.

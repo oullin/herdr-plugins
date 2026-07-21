@@ -7,8 +7,8 @@ describe('plugin core package contract', () => {
 	it('exposes private source runtime and testing entrypoints', () => {
 		const packageJson = JSON.parse(readFileSync(join(
 			process.cwd(),
-			'packages',
-			'plugin-core',
+			'package',
+			'core',
 			'package.json',
 		), 'utf8')) as {
 			readonly name?: string;
@@ -32,5 +32,47 @@ describe('plugin core package contract', () => {
 				'./testing': './src/testing/index.ts',
 			},
 		});
+	});
+
+	it('is discovered from the singular package workspace path', () => {
+		const workspace = readFileSync(
+			join(
+				process.cwd(),
+				'pnpm-workspace.yaml',
+			),
+			'utf8',
+		);
+		const tsconfig = readFileSync(
+			join(
+				process.cwd(),
+				'tsconfig.json',
+			),
+			'utf8',
+		);
+		const viteConfig = readFileSync(
+			join(
+				process.cwd(),
+				'vite.config.ts',
+			),
+			'utf8',
+		);
+
+		expect(workspace).toContain('- package/*');
+		expect(workspace).not.toContain('- packages/*');
+		expect(tsconfig).toContain('"package/**/*.ts"');
+		expect(viteConfig).toContain("'package/**/*.test.ts'");
+	});
+
+	it('points repository metadata at the relocated package', () => {
+		const packageJson = JSON.parse(readFileSync(join(
+			process.cwd(),
+			'package',
+			'core',
+			'package.json',
+		), 'utf8')) as {
+			readonly repository?: { readonly directory?: string };
+		};
+
+		expect(packageJson.repository?.directory).toBe('package/core');
 	});
 });

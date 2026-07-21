@@ -49,7 +49,7 @@ describe('pane-navigation-hints plugin contract', () => {
 
 		expect(packageJson.name).toBe('@oullin/herdr-pane-navigation-hints');
 		expect(packageJson.version).toBe('0.1.0');
-		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../packages/plugin-core' });
+		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../package/core' });
 		expect(
 			Object.keys(packageJson.imports ?? {}),
 		).toEqual([

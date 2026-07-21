@@ -58,6 +58,20 @@ describe('tmux-keybindings plugin contract', () => {
 		]);
 		expect(catalogue).toContain('[Tmux Keybindings](plugins/tmux-keybindings)');
 		expect(packageJson.version).toBe('0.2.0');
-		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../packages/plugin-core' });
+		expect(packageJson.dependencies).toEqual({ '@oullin/herdr-plugin-core': 'file:../../package/core' });
+	});
+
+	it('keeps package and manifest versions aligned', () => {
+		const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
+			readonly version?: string;
+		};
+
+		const manifest = readFileSync(
+			join(root, 'herdr-plugin.toml'),
+			'utf8',
+		);
+
+		expect(packageJson.version).toBe('0.2.0');
+		expect(manifest).toContain(`version = "${packageJson.version}"`);
 	});
 });

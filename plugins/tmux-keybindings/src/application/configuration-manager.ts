@@ -36,9 +36,9 @@ export class ConfigurationManager {
 
 		this.writeAndValidate(configPath, original, originalExists, edit.content);
 
-		if (!savedSnapshot || requiresMigration) {
-			this.state.saveConfigurationSnapshot(edit.snapshot);
-		}
+		const snapshot = requiresMigration ? edit.snapshot : this.editor.mergeSnapshots(savedSnapshot, edit.snapshot);
+
+		this.state.saveConfigurationSnapshot(snapshot);
 
 		if (!automatic) {
 			this.state.setAutomaticApplyDisabled(false);

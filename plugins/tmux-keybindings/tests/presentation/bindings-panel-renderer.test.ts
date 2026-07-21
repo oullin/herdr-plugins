@@ -28,6 +28,9 @@ describe('BindingsPanelRenderer', () => {
 		expect(
 			output.rows.at(-1)?.trim(),
 		).toBe('toggle Option+Command+T  close Esc');
+		expect(
+			output.rows.some((row) => row.includes('Option+Command+T') && row.includes('open / close dialog')),
+		).toBe(true);
 
 		for (const group of PANEL_GROUPS) {
 			expect(

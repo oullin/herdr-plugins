@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test';
 
+import type { ConfigurationSnapshot } from '#tmux-keybindings/domain/models';
 import { KeybindingConfigEditor } from '#tmux-keybindings/infrastructure/keybinding-config-editor';
 
 describe('KeybindingConfigEditor', () => {
@@ -28,7 +29,7 @@ describe('KeybindingConfigEditor', () => {
 		expect(edit.snapshot.assignments['prefix']).toBe("prefix = 'ctrl+#' # keep this explanation");
 	});
 
-	it('inserts a keys section and deduplicates the managed custom command', () => {
+	it('preserves unrelated shortcuts, displaces direct conflicts, and removes legacy plugin actions', () => {
 		const source = [
 			'[theme]',
 			'name = "nord"',
@@ -86,17 +87,20 @@ describe('KeybindingConfigEditor', () => {
 		expect(edit.content).not.toContain('help = ""');
 		expect(edit.snapshot.displacedCommands).toEqual([
 			{
-				line: 23,
-				text: ['[[keys.command]]', 'key = "prefix+l"', 'type = "plugin_action"', 'command = "oullin.tmux-keybindings.toggle"', ''].join('\n'),
-			},
-			{
 				line: 28,
 				text: ['[[keys.command]]', 'key = "alt+super+t"', 'type = "popup"', 'command = "lazygit"', ''].join('\n'),
 			},
 		]);
-		expect(
-			editor.restore(edit.content, edit.snapshot),
-		).toBe(source);
+
+		const restored = editor.restore(edit.content, edit.snapshot);
+
+		expect(restored).toContain('command = "old-help"');
+		expect(restored).toContain('command = "old-super"');
+		expect(restored).toContain('command = "old-hyper"');
+		expect(restored).toContain('command = "old-bridge"');
+		expect(restored).toContain('command = "lazygit"');
+		expect(restored).toContain('command = "gitui"');
+		expect(restored).not.toContain('oullin.tmux-keybindings.toggle');
 	});
 
 	it('is idempotent and restores only plugin-owned values', () => {
@@ -111,5 +115,74 @@ describe('KeybindingConfigEditor', () => {
 		const restored = editor.restore(customised, first.snapshot);
 
 		expect(restored).toBe(source.replace('settings = "prefix+s"', 'settings = "ctrl+s"'));
+	});
+
+	it('restores multiple displaced commands at their original positions', () => {
+		const source = [
+			'[keys]',
+			'prefix = "ctrl+a"',
+			'settings = "prefix+s"',
+			'',
+			'[[keys.command]]',
+			'key = "alt+super+t"',
+			'type = "shell"',
+			'command = "first-dialog"',
+			'',
+			'[[keys.command]]',
+			'key = "prefix+t"',
+			'type = "popup"',
+			'command = "lazygit"',
+			'',
+			'[[keys.command]]',
+			'key = "alt+super+t"',
+			'type = "shell"',
+			'command = "second-dialog"',
+			'',
+		].join('\n');
+
+		const edit = editor.apply(source, '/config.toml');
+		const restored = editor.restore(edit.content, edit.snapshot);
+
+		expect(
+			edit.snapshot.displacedCommands.map((command) => command.line),
+		).toEqual([4, 14]);
+		expect(restored).toBe(source);
+	});
+
+	it('merges current snapshots without losing first-install state', () => {
+		const legacyHelp = ['[[keys.command]]', 'key = "prefix+?"', 'type = "shell"', 'command = "old-help"', ''].join('\n');
+		const legacyPluginAction = ['[[keys.command]]', 'key = "prefix+?"', 'type = "plugin_action"', 'command = "oullin.tmux-keybindings.toggle"', ''].join('\n');
+
+		const saved: ConfigurationSnapshot = {
+			version: 1,
+			configPath: '/config.toml',
+			keysSectionExisted: true,
+			assignments: {
+				prefix: 'prefix = "ctrl+a"',
+				help: 'help = "ctrl+h"',
+			},
+			displacedCommands: [
+				{ line: 4, text: legacyHelp },
+				{ line: 9, text: legacyPluginAction },
+			],
+		};
+
+		const directConflict = ['[[keys.command]]', 'key = "alt+super+t"', 'type = "shell"', 'command = "dialog-help"', ''].join('\n');
+		const discovered = editor.apply(directConflict, '/config.toml').snapshot;
+		const merged = editor.mergeSnapshots(saved, discovered);
+
+		expect(merged).toEqual({
+			...saved,
+			version: 5,
+			displacedCommands: [
+				{ line: 4, text: legacyHelp },
+				{ line: 0, text: directConflict },
+			],
+		});
+
+		const restored = editor.restore(editor.apply('', '/config.toml').content, saved);
+
+		expect(restored).toContain('command = "old-help"');
+		expect(restored).not.toContain('oullin.tmux-keybindings.toggle');
 	});
 });

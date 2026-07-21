@@ -1,14 +1,6 @@
 import type { ConfigurationEdit, ConfigurationSnapshot } from '#tmux-keybindings/domain/models';
 
-import {
-	DIALOG_SHORTCUT,
-	GHOSTTY_BRIDGE_DIALOG_SHORTCUT,
-	HYPER_DIALOG_SHORTCUT,
-	KEYBINDING_PROFILE,
-	LEGACY_DIALOG_SHORTCUT,
-	SUPER_DIALOG_SHORTCUT,
-	TOGGLE_ACTION_ID,
-} from '#tmux-keybindings/domain/keybinding-profile';
+import { DIALOG_SHORTCUT, KEYBINDING_PROFILE, TOGGLE_ACTION_ID } from '#tmux-keybindings/domain/keybinding-profile';
 
 interface CommandBlock {
 	readonly start: number;
@@ -21,6 +13,7 @@ interface CommandBlock {
 const tableHeaderPattern = /^\s*\[.+\]\s*(?:#.*)?$/u;
 const keysHeaderPattern = /^\s*\[keys\]\s*(?:#.*)?$/u;
 const commandHeaderPattern = /^\s*\[\[keys\.command\]\]\s*(?:#.*)?$/u;
+const restorableAssignmentKeys = [...KEYBINDING_PROFILE.map((binding) => binding.key), 'help'];
 
 export class KeybindingConfigEditor {
 	apply(source: string, configPath: string): ConfigurationEdit {
@@ -33,9 +26,9 @@ export class KeybindingConfigEditor {
 		}
 
 		const commandBlocks = this.commandBlocks(sourceLines);
-
 		const managedCommandBlocks = commandBlocks.filter((block) => block.key === DIALOG_SHORTCUT || block.command === TOGGLE_ACTION_ID);
-		const displacedCommands = managedCommandBlocks.map((block) => ({ line: block.start, text: block.text }));
+
+		const displacedCommands = managedCommandBlocks.filter((block) => block.key === DIALOG_SHORTCUT && block.command !== TOGGLE_ACTION_ID).map((block) => ({ line: block.start, text: block.text }));
 
 		let lines = this.removeCommandBlocks(sourceLines, managedCommandBlocks);
 
@@ -54,6 +47,20 @@ export class KeybindingConfigEditor {
 		};
 	}
 
+	mergeSnapshots(saved: ConfigurationSnapshot | undefined, discovered: ConfigurationSnapshot): ConfigurationSnapshot {
+		if (!saved) {
+			return discovered;
+		}
+
+		return {
+			version: 5,
+			configPath: saved.configPath,
+			keysSectionExisted: saved.keysSectionExisted,
+			assignments: saved.assignments,
+			displacedCommands: [...saved.displacedCommands.filter((command) => !this.isPluginCommand(command.text)), ...discovered.displacedCommands],
+		};
+	}
+
 	restore(source: string, snapshot: ConfigurationSnapshot): string {
 		let lines = source.split('\n');
 
@@ -61,7 +68,7 @@ export class KeybindingConfigEditor {
 
 		lines = this.removeCommandBlocks(
 			lines,
-			commandBlocks.filter((block) => block.key === this.snapshotDialogShortcut(snapshot) || block.command === TOGGLE_ACTION_ID),
+			commandBlocks.filter((block) => block.command === TOGGLE_ACTION_ID),
 		);
 		lines = this.restoreAssignments(lines, snapshot);
 
@@ -69,7 +76,7 @@ export class KeybindingConfigEditor {
 			lines = this.removeEmptyKeysSection(lines);
 		}
 
-		for (const command of [...snapshot.displacedCommands].sort((left, right) => left.line - right.line)) {
+		for (const command of snapshot.displacedCommands.filter((candidate) => !this.isPluginCommand(candidate.text)).sort((left, right) => right.line - left.line)) {
 			const insertion = Math.min(command.line, lines.length);
 			const commandLines = command.text.split('\n');
 			const replaceSeparator = commandLines.at(-1) === '' && lines[insertion]?.trim() === '' ? 1 : 0;
@@ -78,22 +85,6 @@ export class KeybindingConfigEditor {
 		}
 
 		return lines.join('\n');
-	}
-
-	private snapshotDialogShortcut(snapshot: ConfigurationSnapshot): string {
-		if (snapshot.version === 1) {
-			return LEGACY_DIALOG_SHORTCUT;
-		}
-
-		if (snapshot.version === 2) {
-			return SUPER_DIALOG_SHORTCUT;
-		}
-
-		if (snapshot.version === 3) {
-			return HYPER_DIALOG_SHORTCUT;
-		}
-
-		return snapshot.version === 4 ? GHOSTTY_BRIDGE_DIALOG_SHORTCUT : DIALOG_SHORTCUT;
 	}
 
 	private applyAssignments(sourceLines: readonly string[]): string[] {
@@ -138,7 +129,9 @@ export class KeybindingConfigEditor {
 		let section = this.keysSection(lines);
 
 		if (!section) {
-			const originals = Object.values(snapshot.assignments).flatMap((assignment) => {
+			const originals = restorableAssignmentKeys.flatMap((key) => {
+				const assignment = snapshot.assignments[key];
+
 				return assignment === null || assignment === undefined ? [] : [assignment];
 			});
 
@@ -156,7 +149,8 @@ export class KeybindingConfigEditor {
 
 		const missing: string[] = [];
 
-		for (const [key, original] of Object.entries(snapshot.assignments)) {
+		for (const key of restorableAssignmentKeys) {
+			const original = snapshot.assignments[key];
 			const index = this.assignmentIndex(lines, section, key);
 
 			if (original === null || original === undefined) {
@@ -209,6 +203,10 @@ export class KeybindingConfigEditor {
 			`command = "${TOGGLE_ACTION_ID}"`,
 			'description = "open tmux keybinding dialog"',
 		]);
+	}
+
+	private isPluginCommand(text: string): boolean {
+		return this.stringValue(text.split('\n'), 'command') === TOGGLE_ACTION_ID;
 	}
 
 	private appendBlock(sourceLines: readonly string[], block: readonly string[]): string[] {

@@ -39,7 +39,7 @@ Use `Option+Command+T`, or invoke the action directly. The underlying Herdr bind
 herdr plugin action invoke oullin.tmux-keybindings.toggle
 ```
 
-The popup is session-modal and leaves the tiled tab layout unchanged. Its header repeats both closing shortcuts so the exit path is always visible.
+The popup is session-modal and leaves the tiled tab layout unchanged. Its title keeps Esc visible, and the footer lists both supported closing shortcuts.
 
 ## Restore and uninstall
 

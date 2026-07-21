@@ -42,6 +42,13 @@ describe('ConfigurationManager', () => {
 		expect(
 			manager.apply(environment),
 		).toBe('applied');
+
+		const applied = readFileSync(configPath, 'utf8');
+
+		expect(applied).not.toContain('help =');
+		expect(applied).toContain('key = "alt+super+t"');
+		expect(state.snapshots.get(configPath)?.version).toBe(5);
+
 		expect(
 			manager.apply(environment),
 		).toBe('unchanged');
