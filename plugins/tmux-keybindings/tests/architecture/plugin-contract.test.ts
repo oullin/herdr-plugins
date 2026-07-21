@@ -28,7 +28,7 @@ describe('tmux-keybindings plugin contract', () => {
 		expect(manifest).toContain('on = "workspace.created"');
 		expect(manifest).toContain('placement = "popup"');
 		expect(manifest).toContain('width = 84');
-		expect(manifest).toContain('height = 24');
+		expect(manifest).toContain('height = 30');
 	});
 
 	it('uses concern aliases and is listed in the root catalogue', () => {

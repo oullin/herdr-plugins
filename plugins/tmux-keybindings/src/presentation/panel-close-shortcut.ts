@@ -1,14 +1,13 @@
 const controlC = 0x03;
 const escape = 0x1b;
+const legacyAltT = 0x74;
 
 export class PanelCloseShortcut {
 	accept(input: Uint8Array): boolean {
-		for (const byte of input) {
-			if (byte === escape || byte === controlC) {
-				return true;
-			}
+		if (input.length === 1) {
+			return input[0] === escape || input[0] === controlC;
 		}
 
-		return false;
+		return input.length === 2 && input[0] === escape && input[1] === legacyAltT;
 	}
 }

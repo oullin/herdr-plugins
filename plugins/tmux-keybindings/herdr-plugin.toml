@@ -47,5 +47,5 @@ id = "bindings"
 title = "Tmux keybindings"
 placement = "popup"
 width = 84
-height = 24
+height = 30
 command = ["node", "index.ts", "bindings"]
