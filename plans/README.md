@@ -6,10 +6,10 @@ metadata; executors must not edit this index.
 
 ## Execution order and status
 
-| Plan | Title                                   | Priority | Effort | Depends on | Status   |
-| ---- | --------------------------------------- | -------- | ------ | ---------- | -------- |
-| 001  | Preserve real pane lookup failures      | P1       | S      | -          | PR READY |
-| 002  | Restyle and harden the tmux help dialog | P1       | M      | -          | PR READY |
+| Plan | Title                                   | Priority | Effort | Depends on | Status |
+| ---- | --------------------------------------- | -------- | ------ | ---------- | ------ |
+| 001  | Preserve real pane lookup failures      | P1       | S      | -          | DONE   |
+| 002  | Restyle and harden the tmux help dialog | P1       | M      | -          | DONE   |
 
 Status values for Ollin delivery: `TODO`, `IN PROGRESS`, `READY FOR PR`,
 `PR DRAFT`, `PR READY`, `DONE`, `BLOCKED`, or `REJECTED`.
@@ -29,6 +29,17 @@ Status values for Ollin delivery: `TODO`, `IN PROGRESS`, `READY FOR PR`,
 - Plan 001 starts from `chore/pane-navigation-hints`.
 - Plan 002 starts only after Plan 001 reaches `PR READY`, and its draft PR uses
   the Plan 001 branch as its base.
+
+## Reconciliation
+
+- Reconciled on 2026-07-21 from `main` at
+  `b3c7373b70491373a3430686c074f28a1bb77674`.
+- Pull requests #6 and #7 were merged into the delivery branch, and pull
+  request #5 carried both accepted plans into `main`.
+- The merged tree exactly matches the reviewed PR #5 head. Focused pane-client
+  and tmux-dialog tests pass on `main`, the dependency audit is clean, and the
+  locally linked tmux plugin opened its popup successfully in the active Herdr
+  session.
 
 ## Findings considered and rejected
 

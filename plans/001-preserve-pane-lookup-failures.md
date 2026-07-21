@@ -19,7 +19,7 @@
 - **Depends on**: none
 - **Category**: bug
 - **Planned at**: commit `41f59cd`, 2026-07-21
-- **Ollin delivery**: PR READY
+- **Ollin delivery**: DONE
 - **Worktree**: `/Users/gocanto/.codex/worktrees/codex/herdr-plugin-plan-001-pane-lookup-errors`
 - **Branch**: `chore/ollin-pane-lookup-errors`
 - **Routing profile**: `gpt-5.6-sol@high=100%`
@@ -31,8 +31,10 @@
 - **Review correction commit**: `5a1cf20c0c1a51fc857586acef9b181cedb74723`
 - **Draft PR**: `https://github.com/oullin/herdr-plugins/pull/6`
 - **PR head**: `5a1cf20c0c1a51fc857586acef9b181cedb74723`
-- **PR state**: ready for review; CI passed; one review thread addressed and
-  resolved; no unresolved threads
+- **PR state**: merged as pull request #6 into the delivery branch; accepted
+  commits reached `main` through pull request #5
+- **Target branch**: `main` at
+  `b3c7373b70491373a3430686c074f28a1bb77674`
 - **Automated review note**: Gemini reviewed the original head and its only
   finding was corrected on the current head; the integration's own notice says
   the consumer review service ended on 2026-07-17, so no current-head rerun is
@@ -175,16 +177,16 @@ only the two in-scope files changed.
 
 ## Done criteria
 
-- [ ] `getPane()` returns `undefined` only for `pane_not_found`.
-- [ ] Other structured Herdr errors retain their code and are thrown.
-- [ ] Process errors and malformed success payloads are observable failures.
-- [ ] The public `Pane | undefined` signature and exports are unchanged.
-- [ ] No new interface, adapter, DTO, `typeof`, `instanceof`, reflection, or
+- [x] `getPane()` returns `undefined` only for `pane_not_found`.
+- [x] Other structured Herdr errors retain their code and are thrown.
+- [x] Process errors and malformed success payloads are observable failures.
+- [x] The public `Pane | undefined` signature and exports are unchanged.
+- [x] No new interface, adapter, DTO, `typeof`, `instanceof`, reflection, or
       `Record` usage is introduced.
-- [ ] Focused tests and `vp run ready` pass.
-- [ ] `pnpm audit --audit-level high` and `git diff --check` pass.
-- [ ] Only the two in-scope files are changed.
-- [ ] The executor creates the required local commit.
+- [x] Focused tests and `vp run ready` pass.
+- [x] `pnpm audit --audit-level high` and `git diff --check` pass.
+- [x] Only the two in-scope files are changed.
+- [x] The executor creates the required local commit.
 
 ## STOP conditions
 

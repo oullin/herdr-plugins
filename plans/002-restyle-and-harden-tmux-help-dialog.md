@@ -25,7 +25,7 @@
 - **Depends on**: none; Ollin stacks it after Plan 001 operationally
 - **Category**: bug
 - **Planned at**: commit `41f59cd`, 2026-07-21
-- **Ollin delivery**: PR READY
+- **Ollin delivery**: DONE
 - **Worktree**: `/Users/gocanto/.codex/worktrees/codex/herdr-plugin-plan-002-tmux-help-dialog`
 - **Branch**: `chore/ollin-tmux-help-dialog`
 - **Routing profile**: `gpt-5.6-sol@high=100%`
@@ -36,8 +36,10 @@
 - **Approved commit**: `65b98fca0610ed99460d291663ed7106275699e6`
 - **Draft PR**: `https://github.com/oullin/herdr-plugins/pull/7`
 - **PR head**: `65b98fca0610ed99460d291663ed7106275699e6`
-- **PR state**: ready for review; current-head CI passed; no review threads,
-  top-level comments, or requested changes
+- **PR state**: merged as pull request #7 into the delivery branch; accepted
+  commits reached `main` through pull request #5
+- **Target branch**: `main` at
+  `b3c7373b70491373a3430686c074f28a1bb77674`
 - **Automated review note**: the discontinued Gemini consumer integration did
   not run after the ready transition; parent review plus two independent
   `gpt-5.6-sol` high-reasoning reviews approved the current head
@@ -266,21 +268,21 @@ and every command remains sourced from `PANEL_GROUPS`.
 
 ## Done criteria
 
-- [ ] The `84x30` output matches the specified visual hierarchy and palette.
-- [ ] Every existing tmux shortcut and description appears without overflow.
-- [ ] Every stripped row is at most 84 code points and ANSI state resets safely.
-- [ ] Short viewports show a truthful resize message and close footer.
-- [ ] Escape, Ctrl+C, and exact `Esc+t` close the dialog.
-- [ ] Arrow keys and unrelated Alt sequences do not close the dialog.
-- [ ] Popup height is 30; all other manifest behavior is unchanged.
-- [ ] New rendering data uses immutable class DTOs/value objects, one exported
+- [x] The `84x30` output matches the specified visual hierarchy and palette.
+- [x] Every existing tmux shortcut and description appears without overflow.
+- [x] Every stripped row is at most 84 code points and ANSI state resets safely.
+- [x] Short viewports show a truthful resize message and close footer.
+- [x] Escape, Ctrl+C, and exact `Esc+t` close the dialog.
+- [x] Arrow keys and unrelated Alt sequences do not close the dialog.
+- [x] Popup height is 30; all other manifest behavior is unchanged.
+- [x] New rendering data uses immutable class DTOs/value objects, one exported
       class per file.
-- [ ] No new interface, adapter, free helper function, `typeof`, `instanceof`,
+- [x] No new interface, adapter, free helper function, `typeof`, `instanceof`,
       reflection, or `Record` usage is introduced.
-- [ ] Focused tests, render smoke, and `vp run ready` pass.
-- [ ] `pnpm audit --audit-level high` and `git diff --check` pass.
-- [ ] Only the ten in-scope files are changed.
-- [ ] The executor creates the required local commit.
+- [x] Focused tests, render smoke, and `vp run ready` pass.
+- [x] `pnpm audit --audit-level high` and `git diff --check` pass.
+- [x] Only the ten in-scope files are changed.
+- [x] The executor creates the required local commit.
 
 ## STOP conditions
 
