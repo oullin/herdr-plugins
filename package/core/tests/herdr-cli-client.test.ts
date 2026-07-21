@@ -74,6 +74,122 @@ describe('HerdrCliClient', () => {
 		]);
 	});
 
+	it('lists panes and owns source-scoped pane title metadata', () => {
+		const runner = new StubCommandRunner(
+			{
+				error: undefined,
+				status: 0,
+				stdout: JSON.stringify({ result: { panes: [{ pane_id: 'p1', tab_id: 't1', workspace_id: 'w1' }] } }),
+				stderr: '',
+			},
+			{
+				error: undefined,
+				status: 0,
+				stdout: '',
+				stderr: '',
+			},
+			{
+				error: undefined,
+				status: 0,
+				stdout: '',
+				stderr: '',
+			},
+		);
+
+		const client = new HerdrCliClient('/mock/herdr', runner);
+
+		expect(
+			client.listPanes('w1'),
+		).toEqual([{ pane_id: 'p1', tab_id: 't1', workspace_id: 'w1' }]);
+
+		client.reportPaneTitle('p1', { source: 'example.hints', title: 'Ctrl+B arrows' });
+		client.reportPaneTitle('p1', { source: 'example.hints', clearTitle: true });
+
+		expect(
+			runner.calls.map(({ args }) => args),
+		).toEqual([
+			['pane', 'list', '--workspace', 'w1'],
+			['pane', 'report-metadata', 'p1', '--source', 'example.hints', '--title', 'Ctrl+B arrows'],
+			['pane', 'report-metadata', 'p1', '--source', 'example.hints', '--clear-title'],
+		]);
+	});
+
+	it('gets a pane through the shared transport', () => {
+		const runner = new StubCommandRunner({
+			error: undefined,
+			status: 0,
+			stdout: JSON.stringify({ result: { pane: { pane_id: 'p1', tab_id: 't1', workspace_id: 'w1' } } }),
+			stderr: '',
+		});
+
+		const client = new HerdrCliClient('/mock/herdr', runner);
+
+		expect(
+			client.getPane('p1'),
+		).toEqual({ pane_id: 'p1', tab_id: 't1', workspace_id: 'w1' });
+		expect(runner.calls[0]?.args).toEqual(['pane', 'get', 'p1']);
+	});
+
+	it('returns undefined when a pane is not found', () => {
+		const runner = new StubCommandRunner({
+			error: undefined,
+			status: 1,
+			stdout: '',
+			stderr: JSON.stringify({ error: { code: 'pane_not_found', message: 'missing pane' } }),
+		});
+
+		const client = new HerdrCliClient('/mock/herdr', runner);
+
+		expect(
+			client.getPane('missing'),
+		).toBeUndefined();
+		expect(runner.calls[0]?.args).toEqual(['pane', 'get', 'missing']);
+	});
+
+	it('preserves structured errors from pane lookups', () => {
+		const runner = new StubCommandRunner({
+			error: undefined,
+			status: 1,
+			stdout: '',
+			stderr: JSON.stringify({ error: { code: 'server_unavailable', message: 'server unavailable' } }),
+		});
+
+		const client = new HerdrCliClient('/mock/herdr', runner);
+
+		try {
+			client.getPane('p1');
+			expect.unreachable();
+		} catch (error) {
+			expect(error).toBeInstanceOf(HerdrCommandError);
+			expect((error as HerdrCommandError).code).toBe('server_unavailable');
+		}
+
+		expect(runner.calls[0]?.args).toEqual(['pane', 'get', 'p1']);
+	});
+
+	it('preserves command-runner errors from pane lookups', () => {
+		const processError = new Error('spawn failed');
+
+		const runner = new StubCommandRunner({
+			error: processError,
+			status: null,
+			stdout: '',
+			stderr: '',
+		});
+
+		const client = new HerdrCliClient('/mock/herdr', runner);
+
+		try {
+			client.getPane('p1');
+			expect.unreachable();
+		} catch (error) {
+			expect(error).toBeInstanceOf(HerdrCommandError);
+			expect((error as HerdrCommandError).cause).toBe(processError);
+		}
+
+		expect(runner.calls[0]?.args).toEqual(['pane', 'get', 'p1']);
+	});
+
 	it('preserves structured Herdr error codes', () => {
 		const runner = new StubCommandRunner({
 			error: undefined,

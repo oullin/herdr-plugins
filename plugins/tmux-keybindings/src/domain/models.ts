@@ -1,7 +1,7 @@
-export type { Environment, Pane } from '@oullin/herdr-plugin-core';
+export type { Environment } from '@oullin/herdr-plugin-core';
 
 export interface ConfigurationSnapshot {
-	readonly version: 1 | 2;
+	readonly version: 1 | 2 | 3 | 4 | 5;
 	readonly configPath: string;
 	readonly keysSectionExisted: boolean;
 	readonly assignments: Readonly<Record<string, string | null>>;

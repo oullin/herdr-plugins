@@ -1,7 +1,7 @@
 import { HerdrCommandError } from '#herdr-plugin-core/errors';
 import type { HerdrCliTransport } from '#herdr-plugin-core/herdr-cli/transport';
 import { isJsonObject } from '#herdr-plugin-core/json';
-import type { Pane, PluginPaneOptions } from '#herdr-plugin-core/models';
+import type { Pane, PaneTitleUpdate, PluginPaneOptions } from '#herdr-plugin-core/models';
 import type { PaneClient } from '#herdr-plugin-core/ports';
 
 export class HerdrPaneClient implements PaneClient {
@@ -11,15 +11,34 @@ export class HerdrPaneClient implements PaneClient {
 		this.transport = transport;
 	}
 
-	getPane(paneId: string): Pane | undefined {
-		const args = ['pane', 'get', paneId];
-		const result = this.transport.execute(args);
+	listPanes(workspaceId?: string): readonly Pane[] {
+		const panes = this.transport.call(['pane', 'list', ...(workspaceId === undefined ? [] : ['--workspace', workspaceId])])['panes'];
 
-		if (result.error || result.status !== 0) {
-			return undefined;
+		if (!Array.isArray(panes)) {
+			throw new HerdrCommandError('Herdr did not return a pane list');
 		}
 
-		return this.parse(this.transport.decodeResult(result.stdout, args)['pane']);
+		return panes.map((pane) => this.parse(pane));
+	}
+
+	getPane(paneId: string): Pane | undefined {
+		const args = ['pane', 'get', paneId];
+
+		try {
+			return this.parse(this.transport.call(args)['pane']);
+		} catch (error) {
+			const commandError = error as HerdrCommandError;
+
+			if (commandError?.code === 'pane_not_found') {
+				return undefined;
+			}
+
+			throw error;
+		}
+	}
+
+	reportPaneTitle(paneId: string, update: PaneTitleUpdate): void {
+		this.transport.run(['pane', 'report-metadata', paneId, '--source', update.source, ...('title' in update ? ['--title', update.title] : ['--clear-title'])]);
 	}
 
 	openPluginPane(options: PluginPaneOptions): Pane {

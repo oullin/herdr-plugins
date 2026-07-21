@@ -1,4 +1,4 @@
-import type { Pane, PluginPaneOptions, Tab, Workspace } from '#herdr-plugin-core/models';
+import type { Pane, PaneTitleUpdate, PluginPaneOptions, Tab, Workspace } from '#herdr-plugin-core/models';
 
 export interface WorkspaceClient {
 	listWorkspaces(): readonly Workspace[];
@@ -16,7 +16,9 @@ export interface ConfigClient {
 }
 
 export interface PaneClient {
+	listPanes(workspaceId?: string): readonly Pane[];
 	getPane(paneId: string): Pane | undefined;
+	reportPaneTitle(paneId: string, update: PaneTitleUpdate): void;
 	openPluginPane(options: PluginPaneOptions): Pane;
 	closePluginPane(paneId: string): boolean;
 }

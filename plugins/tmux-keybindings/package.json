@@ -1,7 +1,7 @@
 {
   "name": "@oullin/herdr-tmux-keybindings",
-  "version": "0.1.2",
-  "description": "Apply a canonical tmux keymap and toggle a persistent Herdr binding panel.",
+  "version": "0.2.0",
+  "description": "Apply a canonical tmux keymap and open a modal Herdr binding reference.",
   "license": "MIT",
   "repository": {
     "type": "git",

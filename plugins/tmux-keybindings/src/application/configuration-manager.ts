@@ -29,12 +29,16 @@ export class ConfigurationManager {
 		const configPath = this.pathResolver.resolve(environment);
 		const originalExists = this.files.exists(configPath);
 		const original = this.files.read(configPath) ?? '';
-		const edit = this.editor.apply(original, configPath);
 		const savedSnapshot = this.state.loadConfigurationSnapshot(configPath);
+		const requiresMigration = savedSnapshot !== undefined && savedSnapshot.version < 5;
+		const baseline = requiresMigration ? this.editor.restore(original, savedSnapshot) : original;
+		const edit = this.editor.apply(baseline, configPath);
 
 		this.writeAndValidate(configPath, original, originalExists, edit.content);
 
-		this.state.saveConfigurationSnapshot(this.editor.mergeSnapshots(savedSnapshot, edit.snapshot));
+		const snapshot = requiresMigration ? edit.snapshot : this.editor.mergeSnapshots(savedSnapshot, edit.snapshot);
+
+		this.state.saveConfigurationSnapshot(snapshot);
 
 		if (!automatic) {
 			this.state.setAutomaticApplyDisabled(false);

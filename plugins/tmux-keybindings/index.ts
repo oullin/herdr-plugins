@@ -26,6 +26,7 @@ export { KeybindingConfigEditor } from '#tmux-keybindings/infrastructure/keybind
 export { StateDirectoryResolver } from '#tmux-keybindings/infrastructure/state-directory-resolver';
 export { BindingsPanelApplication } from '#tmux-keybindings/presentation/bindings-panel-application';
 export { BindingsPanelRenderer } from '#tmux-keybindings/presentation/bindings-panel-renderer';
+export { PanelCloseShortcut } from '#tmux-keybindings/presentation/panel-close-shortcut';
 export { PluginApplication } from '#tmux-keybindings/presentation/plugin-application';
 export { AtomicFileStore, HerdrConfigPathResolver, JsonFileStore, PluginContext, PluginStateDirectoryResolver } from '@oullin/herdr-plugin-core';
 
@@ -39,7 +40,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 		const state = new JsonStateRepository(stateDirectory);
 		const client = new HerdrCliClient();
 		const configuration = new ConfigurationManager(client, new KeybindingConfigEditor(), new ConfigPathResolver(), state);
-		const toggle = new PanelToggle(client, state);
+		const toggle = new PanelToggle(client);
 
 		new PluginApplication(configuration, toggle).run(action, process.env, process.argv.includes('--automatic'));
 	}

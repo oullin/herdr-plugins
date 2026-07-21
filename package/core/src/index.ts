@@ -3,7 +3,7 @@ export { HerdrCommandError, type HerdrErrorOptions, PluginError } from '#herdr-p
 export { executePlugin, type PluginExecutionOptions } from '#herdr-plugin-core/execution';
 export { type HerdrApiError, HerdrCliClient, HerdrCliTransport, HerdrConfigClient, HerdrPaneClient, HerdrResponseDecoder, HerdrTabClient, HerdrWorkspaceClient } from '#herdr-plugin-core/herdr-cli';
 export { isJsonObject } from '#herdr-plugin-core/json';
-export type { Environment, JsonObject, Pane, PluginPaneOptions, Tab, Workspace } from '#herdr-plugin-core/models';
+export type { Environment, JsonObject, Pane, PaneTitleUpdate, PluginPaneOptions, Tab, Workspace } from '#herdr-plugin-core/models';
 export { HerdrConfigPathResolver, PluginStateDirectoryResolver } from '#herdr-plugin-core/path-resolvers';
 export { AtomicFileStore, JsonFileStore } from '#herdr-plugin-core/persistence';
 export { PluginContext } from '#herdr-plugin-core/plugin-context';

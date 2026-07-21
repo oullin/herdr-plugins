@@ -19,6 +19,18 @@ export interface Pane {
 	readonly workspace_id: string;
 }
 
+export type PaneTitleUpdate =
+	| {
+			readonly source: string;
+			readonly title: string;
+			readonly clearTitle?: never;
+	  }
+	| {
+			readonly source: string;
+			readonly title?: never;
+			readonly clearTitle: true;
+	  };
+
 export interface PluginPaneOptions {
 	readonly pluginId: string;
 	readonly entrypoint: string;

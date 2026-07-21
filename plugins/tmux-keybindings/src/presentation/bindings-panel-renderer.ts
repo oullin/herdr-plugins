@@ -1,67 +1,81 @@
-import { PANEL_GROUPS, type BindingDescription, type BindingGroup } from '#tmux-keybindings/domain/keybinding-profile';
+import { PANEL_GROUPS } from '#tmux-keybindings/domain/keybinding-profile';
+import { DialogPalette } from '#tmux-keybindings/presentation/terminal/dialog-palette';
+import { StyledSegment } from '#tmux-keybindings/presentation/terminal/styled-segment';
+import { TerminalLine } from '#tmux-keybindings/presentation/terminal/terminal-line';
 
-const maximumChordWidth = 12;
-const minimumChordWidth = 7;
-const chordWidthRatio = 0.28;
+const minimumWidth = 20;
+const minimumHeight = 4;
+const shortcutWidth = 20;
 
 export class BindingsPanelRenderer {
 	render(width: number, height: number): string {
-		const safeWidth = Math.max(20, width);
-		const safeHeight = Math.max(4, height);
-		const contentWidth = safeWidth - 4;
-		const lines = safeWidth >= 72 ? this.wideLines(contentWidth) : this.narrowLines(contentWidth);
-		const header = this.centre('TMUX KEYBINDINGS', contentWidth);
-		const prefix = this.centre('Ctrl+B, then key', contentWidth);
-		const body = [header, prefix, '', ...lines];
-		const visible = body.slice(0, safeHeight - 1);
+		const safeWidth = Math.max(minimumWidth, width);
+		const safeHeight = Math.max(minimumHeight, height);
+		const palette = DialogPalette.tmux();
+		const contentRows = this.contentRows(safeWidth, palette);
+		const footer = this.footer(palette);
+		const visibleRows = this.visibleRows(contentRows, footer, safeHeight, palette);
 
-		if (body.length > visible.length) {
-			visible[visible.length - 1] = this.truncate('… resize pane to see all bindings', contentWidth);
+		return visibleRows.map((segments) => TerminalLine.from(segments, safeWidth, palette.background).render()).join('\n');
+	}
+
+	private contentRows(width: number, palette: DialogPalette): readonly (readonly StyledSegment[])[] {
+		const rows: (readonly StyledSegment[])[] = [
+			this.title(width, palette),
+			this.text('available commands and configured shortcuts', palette.mutedText, palette),
+			this.text('', palette.primaryText, palette),
+		];
+
+		for (const [groupIndex, group] of PANEL_GROUPS.entries()) {
+			if (groupIndex > 0) {
+				rows.push(this.text('', palette.primaryText, palette));
+			}
+
+			rows.push(this.text(group.title.toLowerCase(), palette.sectionHeading, palette, true));
+
+			for (const binding of group.bindings) {
+				rows.push([
+					StyledSegment.from(binding.chord.padEnd(shortcutWidth), palette.shortcut, palette.background, false),
+					StyledSegment.from(binding.description, palette.primaryText, palette.background, false),
+				]);
+			}
 		}
 
-		return visible.map((line) => `  ${this.truncate(line, contentWidth)}`).join('\n');
+		return rows;
 	}
 
-	private narrowLines(width: number): readonly string[] {
-		return PANEL_GROUPS.flatMap((group, index) => [...(index === 0 ? [] : ['']), group.title.toUpperCase(), ...group.bindings.map((binding) => this.bindingLine(binding, width))]);
+	private title(width: number, palette: DialogPalette): readonly StyledSegment[] {
+		const title = 'tmux keybindings';
+		const badge = 'esc close';
+		const spacing = ' '.repeat(Math.max(1, width - Array.from(title).length - Array.from(badge).length));
+
+		return [
+			StyledSegment.from(title, palette.primaryText, palette.background, true),
+			StyledSegment.from(spacing, palette.primaryText, palette.background, false),
+			StyledSegment.from(badge, palette.closeBadgeText, palette.closeBadgeBackground, true),
+		];
 	}
 
-	private wideLines(width: number): readonly string[] {
-		const columnWidth = Math.floor((width - 3) / 2);
-		const columns: readonly BindingGroup[][] = [[PANEL_GROUPS[0] as BindingGroup, PANEL_GROUPS[1] as BindingGroup], [PANEL_GROUPS[2] as BindingGroup]];
+	private footer(palette: DialogPalette): readonly StyledSegment[] {
+		return this.text('toggle Option+Command+T  close Esc', palette.mutedText, palette);
+	}
 
-		const rendered = columns.map((groups) =>
-			groups.flatMap((group, index) => [...(index === 0 ? [] : ['']), group.title.toUpperCase(), ...group.bindings.map((binding) => this.bindingLine(binding, columnWidth))]),
-		);
+	private visibleRows(contentRows: readonly (readonly StyledSegment[])[], footer: readonly StyledSegment[], height: number, palette: DialogPalette): readonly (readonly StyledSegment[])[] {
+		const contentHeight = height - 1;
+		const visible = contentRows.slice(0, contentHeight);
 
-		const rowCount = Math.max(...rendered.map((column) => column.length));
-		const lines: string[] = [];
-
-		for (let row = 0; row < rowCount; row += 1) {
-			const left = (rendered[0]?.[row] ?? '').padEnd(columnWidth);
-			const right = rendered[1]?.[row] ?? '';
-
-			lines.push(`${left} │ ${right}`.trimEnd());
+		if (contentRows.length > contentHeight) {
+			visible[visible.length - 1] = this.text('... resize dialog to see all bindings', palette.mutedText, palette);
 		}
 
-		return lines;
-	}
-
-	private bindingLine(binding: BindingDescription, width: number): string {
-		const chordWidth = Math.min(maximumChordWidth, Math.max(minimumChordWidth, Math.floor(width * chordWidthRatio)));
-
-		return `${binding.chord.padEnd(chordWidth)} ${binding.description}`;
-	}
-
-	private centre(value: string, width: number): string {
-		return value.padStart(Math.max(value.length, Math.floor((width + value.length) / 2)));
-	}
-
-	private truncate(value: string, width: number): string {
-		if (value.length <= width) {
-			return value;
+		while (visible.length < contentHeight) {
+			visible.push(this.text('', palette.primaryText, palette));
 		}
 
-		return `${value.slice(0, Math.max(0, width - 1))}…`;
+		return [...visible, footer];
+	}
+
+	private text(value: string, foreground: string, palette: DialogPalette, emphasized = false): readonly StyledSegment[] {
+		return [StyledSegment.from(value, foreground, palette.background, emphasized)];
 	}
 }

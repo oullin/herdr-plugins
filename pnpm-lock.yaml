@@ -17,6 +17,12 @@ importers:
 
   package/core: {}
 
+  plugins/pane-navigation-hints:
+    dependencies:
+      '@oullin/herdr-plugin-core':
+        specifier: file:../../package/core
+        version: link:../../package/core
+
   plugins/tab-numbers:
     dependencies:
       '@oullin/herdr-plugin-core':

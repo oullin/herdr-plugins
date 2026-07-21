@@ -1,5 +1,6 @@
-import { KEYBINDING_PROFILE, TOGGLE_ACTION_ID } from '#tmux-keybindings/domain/keybinding-profile';
 import type { ConfigurationEdit, ConfigurationSnapshot } from '#tmux-keybindings/domain/models';
+
+import { DIALOG_SHORTCUT, KEYBINDING_PROFILE, TOGGLE_ACTION_ID } from '#tmux-keybindings/domain/keybinding-profile';
 
 interface CommandBlock {
 	readonly start: number;
@@ -12,7 +13,7 @@ interface CommandBlock {
 const tableHeaderPattern = /^\s*\[.+\]\s*(?:#.*)?$/u;
 const keysHeaderPattern = /^\s*\[keys\]\s*(?:#.*)?$/u;
 const commandHeaderPattern = /^\s*\[\[keys\.command\]\]\s*(?:#.*)?$/u;
-const toggleChord = 'prefix+/';
+const restorableAssignmentKeys = [...KEYBINDING_PROFILE.map((binding) => binding.key), 'help'];
 
 export class KeybindingConfigEditor {
 	apply(source: string, configPath: string): ConfigurationEdit {
@@ -25,9 +26,9 @@ export class KeybindingConfigEditor {
 		}
 
 		const commandBlocks = this.commandBlocks(sourceLines);
-		const managedCommandBlocks = commandBlocks.filter((block) => block.key === toggleChord || block.command === TOGGLE_ACTION_ID);
+		const managedCommandBlocks = commandBlocks.filter((block) => block.key === DIALOG_SHORTCUT || block.command === TOGGLE_ACTION_ID);
 
-		const displacedCommands = managedCommandBlocks.filter((block) => block.key === toggleChord && block.command !== TOGGLE_ACTION_ID).map((block) => ({ line: block.start, text: block.text }));
+		const displacedCommands = managedCommandBlocks.filter((block) => block.key === DIALOG_SHORTCUT && block.command !== TOGGLE_ACTION_ID).map((block) => ({ line: block.start, text: block.text }));
 
 		let lines = this.removeCommandBlocks(sourceLines, managedCommandBlocks);
 
@@ -37,7 +38,7 @@ export class KeybindingConfigEditor {
 		return {
 			content: lines.join('\n'),
 			snapshot: {
-				version: 2,
+				version: 5,
 				configPath,
 				keysSectionExisted: keysSection !== undefined,
 				assignments,
@@ -52,7 +53,7 @@ export class KeybindingConfigEditor {
 		}
 
 		return {
-			version: 2,
+			version: 5,
 			configPath: saved.configPath,
 			keysSectionExisted: saved.keysSectionExisted,
 			assignments: saved.assignments,
@@ -128,8 +129,8 @@ export class KeybindingConfigEditor {
 		let section = this.keysSection(lines);
 
 		if (!section) {
-			const originals = KEYBINDING_PROFILE.flatMap((binding) => {
-				const assignment = snapshot.assignments[binding.key];
+			const originals = restorableAssignmentKeys.flatMap((key) => {
+				const assignment = snapshot.assignments[key];
 
 				return assignment === null || assignment === undefined ? [] : [assignment];
 			});
@@ -148,9 +149,9 @@ export class KeybindingConfigEditor {
 
 		const missing: string[] = [];
 
-		for (const binding of KEYBINDING_PROFILE) {
-			const index = this.assignmentIndex(lines, section, binding.key);
-			const original = snapshot.assignments[binding.key];
+		for (const key of restorableAssignmentKeys) {
+			const original = snapshot.assignments[key];
+			const index = this.assignmentIndex(lines, section, key);
 
 			if (original === null || original === undefined) {
 				if (index !== undefined) {
@@ -197,10 +198,10 @@ export class KeybindingConfigEditor {
 	private appendManagedCommand(sourceLines: readonly string[]): string[] {
 		return this.appendBlock(sourceLines, [
 			'[[keys.command]]',
-			`key = "${toggleChord}"`,
+			`key = "${DIALOG_SHORTCUT}"`,
 			'type = "plugin_action"',
 			`command = "${TOGGLE_ACTION_ID}"`,
-			'description = "toggle tmux keybinding panel"',
+			'description = "open tmux keybinding dialog"',
 		]);
 	}
 

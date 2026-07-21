@@ -8,7 +8,6 @@ describe('keybinding profile', () => {
 			Object.fromEntries(KEYBINDING_PROFILE.map(({ key, value }) => [key, value])),
 		).toEqual({
 			prefix: 'ctrl+b',
-			help: 'prefix+?',
 			detach: 'prefix+d',
 			new_tab: 'prefix+c',
 			rename_tab: 'prefix+comma',
