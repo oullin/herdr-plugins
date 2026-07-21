@@ -24,14 +24,12 @@ export class NavigationHintFormatter {
 		const usesSharedPrefix = this.usesSharedPrefix(bindings);
 		const displayBindings = usesSharedPrefix ? this.withoutBindingPrefixes(bindings) : bindings;
 
-		const segments = [
-			this.focusSegment(displayBindings),
-			this.cycleSegment(displayBindings),
-			displayBindings.lastPane === '' ? undefined : `Last ${this.renderBinding(displayBindings.lastPane, displayBindings.prefix)}`,
-		].filter((segment): segment is string => segment !== undefined);
+		const segments = [this.focusSegment(displayBindings), displayBindings.lastPane === '' ? undefined : `Last ${this.renderBinding(displayBindings.lastPane, displayBindings.prefix)}`].filter(
+			(segment): segment is string => segment !== undefined,
+		);
 
 		const legend = segments.join(separator);
-		const title = segments.length === 0 ? 'Pane navigation is unbound' : usesSharedPrefix ? `${this.renderPrefix(bindings.prefix)} then: ${legend}` : legend;
+		const title = segments.length === 0 ? 'Pane focus is unbound' : usesSharedPrefix ? `${this.renderPrefix(bindings.prefix)} then ${legend}` : legend;
 
 		return this.truncate(title);
 	}
@@ -56,29 +54,10 @@ export class NavigationHintFormatter {
 				bindings.prefix,
 			);
 
-			return collapsed === directions ? `Focus ${directions}` : `Focus ${directions} ${collapsed}`;
+			return collapsed === directions ? directions : `${directions} ${collapsed}`;
 		}
 
-		return `Focus ${directional.map(({ direction, binding }) => `${direction} ${this.renderBinding(binding, bindings.prefix)}`).join(' ')}`;
-	}
-
-	private cycleSegment(bindings: PaneNavigationBindings): string | undefined {
-		const cycleBindings = [bindings.cyclePaneNext, bindings.cyclePanePrevious].filter((binding) => binding !== '');
-
-		if (cycleBindings.length === 0) {
-			return undefined;
-		}
-
-		if (cycleBindings.length === 2) {
-			return `Cycle next/prev ${this.renderBindingList(cycleBindings, bindings.prefix)}`;
-		}
-
-		const labels = [
-			bindings.cyclePaneNext === '' ? undefined : `Next ${this.renderBinding(bindings.cyclePaneNext, bindings.prefix)}`,
-			bindings.cyclePanePrevious === '' ? undefined : `Prev ${this.renderBinding(bindings.cyclePanePrevious, bindings.prefix)}`,
-		].filter((label): label is string => label !== undefined);
-
-		return labels.join(' ');
+		return directional.map(({ direction, binding }) => `${direction} ${this.renderBinding(binding, bindings.prefix)}`).join(' ');
 	}
 
 	private renderBindingList(bindings: readonly string[], prefix: string): string {
@@ -86,9 +65,7 @@ export class NavigationHintFormatter {
 	}
 
 	private usesSharedPrefix(bindings: PaneNavigationBindings): boolean {
-		const actions = [bindings.focusPaneLeft, bindings.focusPaneDown, bindings.focusPaneUp, bindings.focusPaneRight, bindings.cyclePaneNext, bindings.cyclePanePrevious, bindings.lastPane].filter(
-			(binding) => binding !== '',
-		);
+		const actions = [bindings.focusPaneLeft, bindings.focusPaneDown, bindings.focusPaneUp, bindings.focusPaneRight, bindings.lastPane].filter((binding) => binding !== '');
 
 		return bindings.prefix !== '' && actions.length > 0 && actions.every((binding) => binding.startsWith('prefix+') && binding.length > 'prefix+'.length);
 	}

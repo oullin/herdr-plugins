@@ -9,7 +9,7 @@ describe('NavigationHintFormatter', () => {
 	it('formats the Herdr defaults and omits the unbound last-pane action', () => {
 		expect(
 			formatter.format(DEFAULT_PANE_NAVIGATION_BINDINGS),
-		).toBe('Ctrl+B then: Focus ←/↓/↑/→ h/j/k/l · Cycle next/prev Tab/Shift+Tab');
+		).toBe('Ctrl+B then ←/↓/↑/→ h/j/k/l');
 	});
 
 	it('collapses the tmux profile into one compact legend', () => {
@@ -24,10 +24,10 @@ describe('NavigationHintFormatter', () => {
 					cyclePanePrevious: 'prefix+shift+tab',
 					lastPane: 'prefix+;',
 				}),
-		).toBe('Ctrl+B then: Focus ←/↓/↑/→ · Cycle next/prev o/Shift+Tab · Last ;');
+		).toBe('Ctrl+B then ←/↓/↑/→ · Last ;');
 	});
 
-	it('renders partial and direct bindings without inventing missing actions', () => {
+	it('renders partial directional bindings without showing cycle bindings', () => {
 		expect(
 			formatter.format({
 					...DEFAULT_PANE_NAVIGATION_BINDINGS,
@@ -36,7 +36,7 @@ describe('NavigationHintFormatter', () => {
 					cyclePaneNext: 'alt+n',
 					cyclePanePrevious: '',
 				}),
-		).toBe('Focus ← Ctrl+B+h → Ctrl+B+l · Next Alt+n');
+		).toBe('Ctrl+B then ← h → l');
 	});
 
 	it('omits separators before collapsed bindings when the prefix is empty', () => {
@@ -51,7 +51,7 @@ describe('NavigationHintFormatter', () => {
 					cyclePanePrevious: 'prefix+shift+tab',
 					lastPane: 'prefix+;',
 				}),
-		).toBe('Focus ←/↓/↑/→ · Cycle next/prev o/Shift+Tab · Last ;');
+		).toBe('←/↓/↑/→ · Last ;');
 	});
 
 	it('omits separators before individual bindings when the prefix is empty', () => {
@@ -66,7 +66,7 @@ describe('NavigationHintFormatter', () => {
 					cyclePanePrevious: '',
 					lastPane: '',
 				}),
-		).toBe('Focus ← ← · Next Tab');
+		).toBe('← ←');
 	});
 
 	it('reports when every pane navigation action is unbound', () => {
@@ -81,7 +81,7 @@ describe('NavigationHintFormatter', () => {
 					cyclePanePrevious: '',
 					lastPane: '',
 				}),
-		).toBe('Pane navigation is unbound');
+		).toBe('Pane focus is unbound');
 	});
 
 	it('never exceeds the Herdr pane title limit', () => {

@@ -17,11 +17,11 @@ describe('PaneNavigationHintSynchroniser', () => {
 		expect(client.reports).toEqual([
 			{
 				paneId: 'w1:p1',
-				update: { source: PANE_TITLE_SOURCE, title: 'Ctrl+B then: Focus ←/↓/↑/→ h/j/k/l · Cycle next/prev Tab/Shift+Tab' },
+				update: { source: PANE_TITLE_SOURCE, title: 'Ctrl+B then ←/↓/↑/→ h/j/k/l' },
 			},
 			{
 				paneId: 'w1:p2',
-				update: { source: PANE_TITLE_SOURCE, title: 'Ctrl+B then: Focus ←/↓/↑/→ h/j/k/l · Cycle next/prev Tab/Shift+Tab' },
+				update: { source: PANE_TITLE_SOURCE, title: 'Ctrl+B then ←/↓/↑/→ h/j/k/l' },
 			},
 		]);
 	});
