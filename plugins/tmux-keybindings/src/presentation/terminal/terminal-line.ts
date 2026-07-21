@@ -72,22 +72,24 @@ export class TerminalLine {
 	}
 
 	private foregroundSequence(colour: string): string {
-		return `${escape}[38;2;${this.red(colour)};${this.green(colour)};${this.blue(colour)}m`;
+		const [red, green, blue] = this.parseColour(colour);
+
+		return `${escape}[38;2;${red};${green};${blue}m`;
 	}
 
 	private backgroundSequence(colour: string): string {
-		return `${escape}[48;2;${this.red(colour)};${this.green(colour)};${this.blue(colour)}m`;
+		const [red, green, blue] = this.parseColour(colour);
+
+		return `${escape}[48;2;${red};${green};${blue}m`;
 	}
 
-	private red(colour: string): number {
-		return Number.parseInt(colour.slice(1, 3), 16);
-	}
+	private parseColour(colour: string): readonly [number, number, number] {
+		const hexadecimal = colour.startsWith('#') ? colour.slice(1) : colour;
 
-	private green(colour: string): number {
-		return Number.parseInt(colour.slice(3, 5), 16);
-	}
+		if (!/^[0-9a-f]{6}$/iu.test(hexadecimal)) {
+			return [0, 0, 0];
+		}
 
-	private blue(colour: string): number {
-		return Number.parseInt(colour.slice(5, 7), 16);
+		return [Number.parseInt(hexadecimal.slice(0, 2), 16), Number.parseInt(hexadecimal.slice(2, 4), 16), Number.parseInt(hexadecimal.slice(4, 6), 16)];
 	}
 }
