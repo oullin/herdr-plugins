@@ -4,7 +4,7 @@ import { HerdrPaneClient } from '#herdr-plugin-core/herdr-cli/panes';
 import { HerdrTabClient } from '#herdr-plugin-core/herdr-cli/tabs';
 import { HerdrCliTransport } from '#herdr-plugin-core/herdr-cli/transport';
 import { HerdrWorkspaceClient } from '#herdr-plugin-core/herdr-cli/workspaces';
-import type { Environment, JsonObject, Pane, PluginPaneOptions, Tab, Workspace } from '#herdr-plugin-core/models';
+import type { Environment, JsonObject, Pane, PaneTitleUpdate, PluginPaneOptions, Tab, Workspace } from '#herdr-plugin-core/models';
 import type { HerdrClient } from '#herdr-plugin-core/ports';
 
 export class HerdrCliClient implements HerdrClient {
@@ -54,8 +54,16 @@ export class HerdrCliClient implements HerdrClient {
 		this.config.reloadConfig();
 	}
 
+	listPanes(workspaceId?: string): readonly Pane[] {
+		return this.panes.listPanes(workspaceId);
+	}
+
 	getPane(paneId: string): Pane | undefined {
 		return this.panes.getPane(paneId);
+	}
+
+	reportPaneTitle(paneId: string, update: PaneTitleUpdate): void {
+		this.panes.reportPaneTitle(paneId, update);
 	}
 
 	openPluginPane(options: PluginPaneOptions): Pane {

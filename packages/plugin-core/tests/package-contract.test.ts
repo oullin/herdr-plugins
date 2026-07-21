@@ -20,7 +20,7 @@ describe('plugin core package contract', () => {
 		expect(packageJson).toMatchObject({
 			name: '@oullin/herdr-plugin-core',
 			private: true,
-			version: '0.1.0',
+			version: '0.1.1',
 			exports: {
 				'.': './src/index.ts',
 				'./herdr-cli': './src/herdr-cli/index.ts',

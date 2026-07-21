@@ -1,7 +1,7 @@
 import { HerdrCommandError } from '#herdr-plugin-core/errors';
 import type { HerdrCliTransport } from '#herdr-plugin-core/herdr-cli/transport';
 import { isJsonObject } from '#herdr-plugin-core/json';
-import type { Pane, PluginPaneOptions } from '#herdr-plugin-core/models';
+import type { Pane, PaneTitleUpdate, PluginPaneOptions } from '#herdr-plugin-core/models';
 import type { PaneClient } from '#herdr-plugin-core/ports';
 
 export class HerdrPaneClient implements PaneClient {
@@ -9,6 +9,16 @@ export class HerdrPaneClient implements PaneClient {
 
 	constructor(transport: HerdrCliTransport) {
 		this.transport = transport;
+	}
+
+	listPanes(workspaceId?: string): readonly Pane[] {
+		const panes = this.transport.call(['pane', 'list', ...(workspaceId === undefined ? [] : ['--workspace', workspaceId])])['panes'];
+
+		if (!Array.isArray(panes)) {
+			throw new HerdrCommandError('Herdr did not return a pane list');
+		}
+
+		return panes.map((pane) => this.parse(pane));
 	}
 
 	getPane(paneId: string): Pane | undefined {
@@ -20,6 +30,10 @@ export class HerdrPaneClient implements PaneClient {
 		}
 
 		return this.parse(this.transport.decodeResult(result.stdout, args)['pane']);
+	}
+
+	reportPaneTitle(paneId: string, update: PaneTitleUpdate): void {
+		this.transport.run(['pane', 'report-metadata', paneId, '--source', update.source, ...('title' in update ? ['--title', update.title] : ['--clear-title'])]);
 	}
 
 	openPluginPane(options: PluginPaneOptions): Pane {

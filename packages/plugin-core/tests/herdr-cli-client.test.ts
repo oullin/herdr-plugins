@@ -74,6 +74,46 @@ describe('HerdrCliClient', () => {
 		]);
 	});
 
+	it('lists panes and owns source-scoped pane title metadata', () => {
+		const runner = new StubCommandRunner(
+			{
+				error: undefined,
+				status: 0,
+				stdout: JSON.stringify({ result: { panes: [{ pane_id: 'p1', tab_id: 't1', workspace_id: 'w1' }] } }),
+				stderr: '',
+			},
+			{
+				error: undefined,
+				status: 0,
+				stdout: '',
+				stderr: '',
+			},
+			{
+				error: undefined,
+				status: 0,
+				stdout: '',
+				stderr: '',
+			},
+		);
+
+		const client = new HerdrCliClient('/mock/herdr', runner);
+
+		expect(
+			client.listPanes('w1'),
+		).toEqual([{ pane_id: 'p1', tab_id: 't1', workspace_id: 'w1' }]);
+
+		client.reportPaneTitle('p1', { source: 'example.hints', title: 'Ctrl+B arrows' });
+		client.reportPaneTitle('p1', { source: 'example.hints', clearTitle: true });
+
+		expect(
+			runner.calls.map(({ args }) => args),
+		).toEqual([
+			['pane', 'list', '--workspace', 'w1'],
+			['pane', 'report-metadata', 'p1', '--source', 'example.hints', '--title', 'Ctrl+B arrows'],
+			['pane', 'report-metadata', 'p1', '--source', 'example.hints', '--clear-title'],
+		]);
+	});
+
 	it('preserves structured Herdr error codes', () => {
 		const runner = new StubCommandRunner({
 			error: undefined,
