@@ -29,7 +29,7 @@ export class HerdrPaneClient implements PaneClient {
 		} catch (error) {
 			const commandError = error as HerdrCommandError;
 
-			if (commandError.code === 'pane_not_found') {
+			if (commandError?.code === 'pane_not_found') {
 				return undefined;
 			}
 
