@@ -3,28 +3,15 @@ import { describe, expect, it } from 'vite-plus/test';
 import { PanelCloseShortcut } from '#tmux-keybindings/presentation/panel-close-shortcut';
 
 describe('PanelCloseShortcut', () => {
-	it('closes when Ctrl+B and Q arrive together', () => {
+	it('closes when Option+Command+T arrives as a legacy alt sequence', () => {
 		expect(
-			new PanelCloseShortcut().accept(Uint8Array.from([0x02, 0x71])),
+			new PanelCloseShortcut().accept(Uint8Array.from([0x1b, 0x74])),
 		).toBe(true);
 	});
 
-	it('remembers Ctrl+B across input chunks', () => {
-		const shortcut = new PanelCloseShortcut();
-
+	it('ignores plain input', () => {
 		expect(
-			shortcut.accept(Uint8Array.from([0x02])),
-		).toBe(false);
-		expect(
-			shortcut.accept(Uint8Array.from([0x51])),
-		).toBe(true);
-	});
-
-	it('ignores unrelated keys after the prefix', () => {
-		const shortcut = new PanelCloseShortcut();
-
-		expect(
-			shortcut.accept(Uint8Array.from([0x02, 0x78, 0x71])),
+			new PanelCloseShortcut().accept(Uint8Array.from([0x74])),
 		).toBe(false);
 	});
 

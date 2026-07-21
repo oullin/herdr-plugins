@@ -130,8 +130,8 @@ describe('ConfigurationManager', () => {
 
 		expect(migrated).not.toContain('help = ""');
 		expect(migrated).not.toContain('key = "prefix+?"');
-		expect(migrated).toContain('key = "prefix+ctrl+alt+shift+super+q"');
-		expect(state.snapshots.get(configPath)?.version).toBe(3);
+		expect(migrated).toContain('key = "alt+super+t"');
+		expect(state.snapshots.get(configPath)?.version).toBe(5);
 		expect(state.snapshots.get(configPath)?.assignments).not.toHaveProperty('help');
 
 		expect(
@@ -188,11 +188,11 @@ describe('ConfigurationManager', () => {
 		const migrated = readFileSync(configPath, 'utf8');
 
 		expect(migrated).toContain('command = "old-super"');
-		expect(migrated).toContain('key = "prefix+ctrl+alt+shift+super+q"');
+		expect(migrated).toContain('key = "alt+super+t"');
 		expect(
 			migrated.match(/oullin\.tmux-keybindings\.toggle/gu),
 		).toHaveLength(1);
-		expect(state.snapshots.get(configPath)?.version).toBe(3);
+		expect(state.snapshots.get(configPath)?.version).toBe(5);
 
 		expect(
 			manager.restore({ HERDR_CONFIG_PATH: configPath }),
@@ -200,6 +200,96 @@ describe('ConfigurationManager', () => {
 		expect(
 			readFileSync(configPath, 'utf8').trimEnd(),
 		).toBe(original.trimEnd());
+	});
+
+	it('migrates the Hyperkey modifier chord to the direct dialog shortcut', () => {
+		const directory = mkdtempSync(
+			join(
+				tmpdir(),
+				'herdr-tmux-hyper-migration-',
+			),
+		);
+
+		const configPath = join(directory, 'config.toml');
+
+		const hyperApplied = [
+			'[keys]',
+			'prefix = "ctrl+b"',
+			'',
+			'[[keys.command]]',
+			'key = "prefix+ctrl+alt+shift+super+q"',
+			'type = "plugin_action"',
+			'command = "oullin.tmux-keybindings.toggle"',
+			'description = "open tmux keybinding dialog"',
+			'',
+		].join('\n');
+
+		writeFileSync(configPath, hyperApplied);
+
+		const { manager, state } = subject();
+
+		state.snapshots.set(configPath, {
+			version: 3,
+			configPath,
+			keysSectionExisted: true,
+			assignments: Object.fromEntries(KEYBINDING_PROFILE.map(({ key }) => [key, null])),
+			displacedCommands: [],
+		});
+
+		expect(
+			manager.apply({ HERDR_CONFIG_PATH: configPath }),
+		).toBe('applied');
+
+		const migrated = readFileSync(configPath, 'utf8');
+
+		expect(migrated).not.toContain('key = "prefix+ctrl+alt+shift+super+q"');
+		expect(migrated).toContain('key = "alt+super+t"');
+		expect(state.snapshots.get(configPath)?.version).toBe(5);
+	});
+
+	it('migrates the terminal bridge to the direct dialog shortcut', () => {
+		const directory = mkdtempSync(
+			join(
+				tmpdir(),
+				'herdr-tmux-bridge-migration-',
+			),
+		);
+
+		const configPath = join(directory, 'config.toml');
+
+		const bridgeApplied = [
+			'[keys]',
+			'prefix = "ctrl+b"',
+			'',
+			'[[keys.command]]',
+			'key = "prefix+ctrl+g"',
+			'type = "plugin_action"',
+			'command = "oullin.tmux-keybindings.toggle"',
+			'description = "open tmux keybinding dialog"',
+			'',
+		].join('\n');
+
+		writeFileSync(configPath, bridgeApplied);
+
+		const { manager, state } = subject();
+
+		state.snapshots.set(configPath, {
+			version: 4,
+			configPath,
+			keysSectionExisted: true,
+			assignments: Object.fromEntries(KEYBINDING_PROFILE.map(({ key }) => [key, null])),
+			displacedCommands: [],
+		});
+
+		expect(
+			manager.apply({ HERDR_CONFIG_PATH: configPath }),
+		).toBe('applied');
+
+		const migrated = readFileSync(configPath, 'utf8');
+
+		expect(migrated).not.toContain('key = "prefix+ctrl+g"');
+		expect(migrated).toContain('key = "alt+super+t"');
+		expect(state.snapshots.get(configPath)?.version).toBe(5);
 	});
 
 	it('does not reapply automatically after a restore', () => {

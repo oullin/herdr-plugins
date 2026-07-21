@@ -56,11 +56,11 @@ export class BindingsPanelRenderer {
 
 	private shortcutLines(width: number): readonly string[] {
 		if (width >= 48) {
-			return [this.centre('Open/close Ctrl+B then CapsLock+Q  •  Esc closes', width)];
+			return [this.centre('Open/close Option+Command+T  •  Esc closes', width)];
 		}
 
 		if (width >= 25) {
-			return [this.centre('Ctrl+B then CapsLock+Q', width), this.centre('Esc closes', width)];
+			return [this.centre('Option+Command+T', width), this.centre('Esc closes', width)];
 		}
 
 		return [this.centre('Esc closes', width)];

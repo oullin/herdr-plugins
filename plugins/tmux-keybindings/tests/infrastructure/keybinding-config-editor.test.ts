@@ -44,12 +44,22 @@ describe('KeybindingConfigEditor', () => {
 			'command = "old-super"',
 			'',
 			'[[keys.command]]',
+			'key = "prefix+ctrl+alt+shift+super+q"',
+			'type = "shell"',
+			'command = "old-hyper"',
+			'',
+			'[[keys.command]]',
+			'key = "prefix+ctrl+g"',
+			'type = "shell"',
+			'command = "old-bridge"',
+			'',
+			'[[keys.command]]',
 			'key = "prefix+l"',
 			'type = "plugin_action"',
 			'command = "oullin.tmux-keybindings.toggle"',
 			'',
 			'[[keys.command]]',
-			'key = "prefix+ctrl+alt+shift+super+q"',
+			'key = "alt+super+t"',
 			'type = "popup"',
 			'command = "lazygit"',
 			'',
@@ -62,24 +72,26 @@ describe('KeybindingConfigEditor', () => {
 
 		const edit = editor.apply(source, '/config.toml');
 
-		expect(edit.snapshot.version).toBe(3);
+		expect(edit.snapshot.version).toBe(5);
 		expect(edit.content).toContain('[keys]\nprefix = "ctrl+b"');
 		expect(
 			edit.content.match(/oullin\.tmux-keybindings\.toggle/gu),
 		).toHaveLength(1);
 		expect(edit.content).toContain('command = "old-help"');
 		expect(edit.content).toContain('command = "old-super"');
+		expect(edit.content).toContain('command = "old-hyper"');
+		expect(edit.content).toContain('command = "old-bridge"');
 		expect(edit.content).toContain('command = "gitui"');
 		expect(edit.content).not.toContain('command = "lazygit"');
 		expect(edit.content).not.toContain('help = ""');
 		expect(edit.snapshot.displacedCommands).toEqual([
 			{
-				line: 13,
+				line: 23,
 				text: ['[[keys.command]]', 'key = "prefix+l"', 'type = "plugin_action"', 'command = "oullin.tmux-keybindings.toggle"', ''].join('\n'),
 			},
 			{
-				line: 18,
-				text: ['[[keys.command]]', 'key = "prefix+ctrl+alt+shift+super+q"', 'type = "popup"', 'command = "lazygit"', ''].join('\n'),
+				line: 28,
+				text: ['[[keys.command]]', 'key = "alt+super+t"', 'type = "popup"', 'command = "lazygit"', ''].join('\n'),
 			},
 		]);
 		expect(
