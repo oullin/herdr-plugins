@@ -1,6 +1,30 @@
 # Pane Navigation Hints
 
-Show the effective pane navigation shortcuts in every Herdr pane border. The plugin reads the active `config.toml`, keeps the legend below Herdr's 80-character pane-title limit, and updates newly created panes automatically.
+Show the effective pane navigation shortcuts in every Herdr pane border.
+
+## Install
+
+Pane Navigation Hints requires Herdr 0.7.4 or newer and Node.js 24.12 or newer within the Node.js 24 release line.
+
+Install the plugin, then refresh panes that already exist:
+
+```sh
+herdr plugin install oullin/herdr-plugins/plugins/pane-navigation-hints
+herdr plugin action invoke oullin.pane-navigation-hints.refresh
+```
+
+![Two Herdr panes with a Ctrl+B navigation legend in their borders](../../docs/images/pane-navigation-hints.png)
+
+## Actions
+
+| Action  | Command                                                           | Effect                                                  |
+| ------- | ----------------------------------------------------------------- | ------------------------------------------------------- |
+| Refresh | `herdr plugin action invoke oullin.pane-navigation-hints.refresh` | Re-read the active configuration and update every pane. |
+| Clear   | `herdr plugin action invoke oullin.pane-navigation-hints.clear`   | Remove only the title metadata owned by this plugin.    |
+
+A `pane.created` hook applies the current legend to future panes. Invoke refresh again after changing and reloading `config.toml`.
+
+## Reading the legend
 
 For the tmux-style profile, the border resembles:
 
@@ -8,30 +32,15 @@ For the tmux-style profile, the border resembles:
 Ctrl+B then ←/↓/↑/→ · Last ;
 ```
 
-Read the shared prefix first: press `Ctrl+B`, release it, then press the arrow pointing toward the adjacent pane you want to focus. `Last ;` uses the same prefix to return to the last pane.
+Read the shared prefix first: press `Ctrl+B`, release it, then press the arrow pointing towards the adjacent pane you want to focus. `Last ;` uses the same prefix to return to the last pane.
 
-The plugin is display-only. It does not change keybindings and does not depend on the Tmux Keybindings plugin.
+The plugin is display-only. It does not change keybindings and does not depend on the Tmux Keybindings plugin. It reads the active `config.toml`, keeps the legend below Herdr's 80-character pane-title limit, and updates newly created panes automatically.
 
-## Install and refresh
-
-```sh
-herdr plugin install oullin/herdr-plugins/plugins/pane-navigation-hints
-herdr plugin action invoke oullin.pane-navigation-hints.refresh
-```
-
-The refresh action validates the current Herdr configuration, reads pane navigation values from `[keys]`, and applies the legend to all existing panes. Missing values use the Herdr 0.7.4 defaults, while empty strings remain unbound and are omitted from the legend.
-
-A `pane.created` hook applies the same legend to future panes. Invoke refresh again after changing and reloading `config.toml`.
+The refresh action validates the current Herdr configuration and reads pane navigation values from `[keys]`. Missing values use the Herdr 0.7.4 defaults, while empty strings remain unbound and are omitted from the legend.
 
 The config path follows `HERDR_CONFIG_PATH` when it is set. Otherwise the plugin reads `%APPDATA%\herdr\config.toml` on Windows and `~/.config/herdr/config.toml` (or `$XDG_CONFIG_HOME/herdr/config.toml`) on Linux and macOS.
 
 ## Clear and uninstall
-
-Clear the plugin-owned title metadata to reveal the normal pane titles:
-
-```sh
-herdr plugin action invoke oullin.pane-navigation-hints.clear
-```
 
 Clear active hints before disabling or uninstalling the plugin:
 
