@@ -47,7 +47,7 @@ Herdr previews each plugin and its build and runtime commands before confirming 
 
 ![Herdr tabs labelled Dashboard 1, Editor 2, and Tests 3](docs/images/tab-numbers.png)
 
-The `sync` action re-indexes all named tabs. Creation, rename, move, and close events keep the numbers contiguous afterwards. See the [Tab Numbers documentation](plugins/tab-numbers) for behaviour and cleanup details.
+The `sync` action re-indexes all named tabs. Creation, rename, move, close, and pane-exit events keep the numbers contiguous afterwards. See the [Tab Numbers documentation](plugins/tab-numbers) for behaviour and cleanup details.
 
 ### Tmux Keybindings
 

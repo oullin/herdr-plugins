@@ -82,7 +82,7 @@ describe('module aliases', () => {
 			'utf8',
 		);
 
-		expect(packageJson.version).toBe('0.1.7');
+		expect(packageJson.version).toBe('0.1.8');
 		expect(manifest).toContain(`version = "${packageJson.version}"`);
 	});
 });

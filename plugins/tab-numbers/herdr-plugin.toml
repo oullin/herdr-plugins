@@ -1,6 +1,6 @@
 id = "oullin.tab-numbers"
 name = "Tab Numbers"
-version = "0.1.7"
+version = "0.1.8"
 min_herdr_version = "0.7.0"
 description = "Show contiguous position numbers in named Herdr tab labels"
 platforms = ["linux", "macos", "windows"]
@@ -38,4 +38,12 @@ command = ["node", "index.ts"]
 
 [[events]]
 on = "tab.moved"
+command = ["node", "index.ts"]
+
+[[events]]
+on = "pane.closed"
+command = ["node", "index.ts"]
+
+[[events]]
+on = "pane.exited"
 command = ["node", "index.ts"]

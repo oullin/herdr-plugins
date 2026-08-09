@@ -6,7 +6,7 @@ export type { Environment } from '@oullin/herdr-plugin-core';
 
 export class TabNumbersPlugin {
 	private static readonly singleTabEvents: ReadonlySet<string> = new Set(['tab.created', 'tab.renamed']);
-	private static readonly workspaceTabEvents: ReadonlySet<string> = new Set(['tab.closed', 'tab.moved']);
+	private static readonly workspaceTabEvents: ReadonlySet<string> = new Set(['tab.closed', 'tab.moved', 'pane.closed', 'pane.exited']);
 
 	private readonly synchroniser: TabNumberSynchroniser;
 
