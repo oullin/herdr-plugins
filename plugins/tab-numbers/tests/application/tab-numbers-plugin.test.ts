@@ -38,7 +38,7 @@ describe('TabNumbersPlugin', () => {
 		expect(client.renameCalls).toEqual([['w1:t7', 'new label · 3']]);
 	});
 
-	it.each(['tab.closed', 'tab.moved'])('reindexes the affected workspace for %s', (event) => {
+	it.each(['tab.closed', 'tab.moved', 'pane.closed'])('reindexes the affected workspace for %s', (event) => {
 		const client = new FakeHerdrClient({
 			tabsByWorkspace: new Map([
 				[

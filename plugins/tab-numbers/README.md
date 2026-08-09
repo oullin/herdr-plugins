@@ -21,7 +21,7 @@ herdr plugin action invoke oullin.tab-numbers.sync
 | ------ | ---------------------------------------------------- | --------------------------------------------------------- |
 | Sync   | `herdr plugin action invoke oullin.tab-numbers.sync` | Re-index every named tab using its current display order. |
 
-The `tab.created`, `tab.renamed`, `tab.closed`, and `tab.moved` hooks keep the sequence contiguous after the initial synchronisation.
+The `tab.created`, `tab.renamed`, `tab.closed`, `tab.moved`, `pane.closed`, and `pane.exited` hooks keep the sequence contiguous after the initial synchronisation. The pane hooks cover tabs that close because their last shell exits, which Herdr reports without a `tab.closed` event.
 
 ## Behaviour
 
